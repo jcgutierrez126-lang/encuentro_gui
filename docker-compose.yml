@@ -1,0 +1,22 @@
+services:
+  dashboard:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://contabilidad.fincaelcielocoffee.com}
+    restart: unless-stopped
+    ports:
+      - "3009:3009"
+    env_file: .env.production
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:noexec,nodev,nosuid
+      - /var/tmp:noexec,nodev,nosuid
+    read_only: true
+    volumes:
+      - cielo_next_cache:/app/.next/cache
+volumes:
+  cielo_next_cache:
