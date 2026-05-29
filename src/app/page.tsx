@@ -1,11 +1,14 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { ArrowRight, BarChart2, ShoppingBag, Package, TrendingUp } from "lucide-react"
 
-const STATS = [
+const Beams = dynamic(() => import("@/components/beams"), { ssr: false })
+
+const MODULOS = [
   { icon: ShoppingBag, label: "Ventas" },
   { icon: Package,     label: "Inventario" },
   { icon: BarChart2,   label: "Reportes" },
@@ -15,17 +18,26 @@ const STATS = [
 export default function LandingPage() {
   return (
     <div
-      className="min-h-screen w-full flex flex-col items-center justify-center px-6"
+      className="min-h-screen w-full flex flex-col items-center justify-center px-6 relative overflow-hidden"
       style={{ backgroundColor: "#0D0806" }}
     >
-      {/* Gradiente radial sutil centrado */}
-      <div
-        className="pointer-events-none fixed inset-0"
-        style={{
-          background: "radial-gradient(ellipse 60% 50% at 50% 40%, rgba(240,180,41,0.06) 0%, transparent 70%)",
-        }}
-      />
+      {/* Beams de fondo */}
+      <div className="absolute inset-0 z-0">
+        <Beams
+          beamWidth={2}
+          beamHeight={18}
+          beamNumber={10}
+          lightColor="#C88A1A"
+          speed={1.4}
+          noiseIntensity={1.6}
+          scale={0.18}
+          rotation={0}
+        />
+        {/* Oscurecer levemente para que el contenido sea legible */}
+        <div className="absolute inset-0" style={{ background: "rgba(13,8,6,0.55)" }} />
+      </div>
 
+      {/* Contenido */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -36,8 +48,9 @@ export default function LandingPage() {
         <div
           className="h-16 w-16 rounded-2xl overflow-hidden flex items-center justify-center mb-6"
           style={{
-            background: "rgba(240,180,41,0.08)",
-            border: "1px solid rgba(240,180,41,0.18)",
+            background: "rgba(240,180,41,0.1)",
+            border: "1px solid rgba(240,180,41,0.22)",
+            boxShadow: "0 0 32px rgba(240,180,41,0.15)",
           }}
         >
           <Image
@@ -46,37 +59,31 @@ export default function LandingPage() {
             width={52}
             height={52}
             className="object-contain"
-            style={{ filter: "drop-shadow(0 2px 8px rgba(240,180,41,0.3))" }}
+            style={{ filter: "drop-shadow(0 2px 12px rgba(240,180,41,0.4))" }}
             priority
           />
         </div>
 
-        {/* Nombre */}
-        <h1
-          className="text-2xl font-black tracking-tight mb-1"
-          style={{ color: "rgba(255,240,210,0.92)" }}
-        >
+        <h1 className="text-2xl font-black tracking-tight mb-1" style={{ color: "rgba(255,240,210,0.93)" }}>
           El Encuentro
         </h1>
-        <p
-          className="text-xs uppercase tracking-[0.2em] mb-10"
-          style={{ color: "rgba(240,180,41,0.45)" }}
-        >
+        <p className="text-xs uppercase tracking-[0.2em] mb-10" style={{ color: "rgba(240,180,41,0.5)" }}>
           Sistema de gestión
         </p>
 
-        {/* Módulos en miniatura */}
+        {/* Módulos */}
         <div className="grid grid-cols-4 gap-2 w-full mb-10">
-          {STATS.map(({ icon: Icon, label }) => (
+          {MODULOS.map(({ icon: Icon, label }) => (
             <div
               key={label}
               className="flex flex-col items-center gap-1.5 rounded-xl py-3"
               style={{
-                background: "rgba(255,240,210,0.03)",
-                border: "1px solid rgba(255,240,210,0.06)",
+                background: "rgba(255,240,210,0.04)",
+                border: "1px solid rgba(255,240,210,0.07)",
+                backdropFilter: "blur(8px)",
               }}
             >
-              <Icon className="h-4 w-4" style={{ color: "rgba(240,180,41,0.45)" }} />
+              <Icon className="h-4 w-4" style={{ color: "rgba(240,180,41,0.5)" }} />
               <span className="text-[9px] uppercase tracking-wider" style={{ color: "rgba(255,240,210,0.3)" }}>
                 {label}
               </span>
@@ -91,7 +98,7 @@ export default function LandingPage() {
             style={{
               background: "linear-gradient(135deg, #F0B429 0%, #C88A1A 100%)",
               color: "#3D1F00",
-              boxShadow: "0 4px 20px rgba(240,180,41,0.22)",
+              boxShadow: "0 4px 24px rgba(240,180,41,0.28)",
             }}
           >
             Acceder al sistema
@@ -99,25 +106,20 @@ export default function LandingPage() {
           </button>
         </Link>
 
-        {/* Enlace catálogo */}
         <a
           href="https://cafeelencuentro.com"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-5 text-[11px] transition-colors"
           style={{ color: "rgba(255,240,210,0.18)" }}
-          onMouseEnter={e => (e.currentTarget.style.color = "rgba(240,180,41,0.4)")}
+          onMouseEnter={e => (e.currentTarget.style.color = "rgba(240,180,41,0.45)")}
           onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,240,210,0.18)")}
         >
           cafeelencuentro.com →
         </a>
       </motion.div>
 
-      {/* Footer */}
-      <p
-        className="absolute bottom-6 text-[10px]"
-        style={{ color: "rgba(255,240,210,0.1)" }}
-      >
+      <p className="absolute bottom-6 text-[10px] z-10" style={{ color: "rgba(255,240,210,0.1)" }}>
         El Encuentro · Café de origen colombiano
       </p>
     </div>

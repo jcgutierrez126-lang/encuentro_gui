@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import dynamic from "next/dynamic"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
@@ -8,6 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, ArrowRight } from "lucide-react"
 import { saveAuth } from "@/lib/auth"
+
+const Beams = dynamic(() => import("@/components/beams"), { ssr: false })
 
 const ROLES = [
   { id: "administrador", label: "Administrador" },
@@ -58,22 +61,29 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen w-full flex items-center justify-center px-6"
+      className="min-h-screen w-full flex items-center justify-center px-6 relative overflow-hidden"
       style={{ backgroundColor: "#0D0806" }}
     >
-      {/* Gradiente radial sutil */}
-      <div
-        className="pointer-events-none fixed inset-0"
-        style={{
-          background: "radial-gradient(ellipse 60% 50% at 50% 40%, rgba(240,180,41,0.05) 0%, transparent 70%)",
-        }}
-      />
+      {/* Beams de fondo */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <Beams
+          beamWidth={1.5}
+          beamHeight={16}
+          beamNumber={8}
+          lightColor="#C88A1A"
+          speed={1.2}
+          noiseIntensity={1.5}
+          scale={0.15}
+          rotation={0}
+        />
+        <div className="absolute inset-0" style={{ background: "rgba(13,8,6,0.6)" }} />
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="relative z-10 w-full max-w-[340px]"
+        className="relative z-10 w-full max-w-[340px] backdrop-blur-sm"
       >
         {/* Logo + nombre */}
         <div className="flex flex-col items-center mb-8">
