@@ -16,7 +16,8 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { NavLinks } from "@/components/dashboard/nav-links"
 import { Button } from "@/components/ui/button"
 import { getUser, clearAuth, getRoleLabel, type AuthUser } from "@/lib/auth"
-import { LogOut, Clock, Leaf } from "lucide-react"
+import { LogOut, Clock } from "lucide-react"
+import Image from "next/image"
 
 function LiveClock() {
   const [time, setTime] = useState<string>("")
@@ -73,16 +74,17 @@ function SidebarBrand() {
   const { collapsed } = useSidebar()
   return (
     <Link href="/resumen" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity overflow-hidden">
-      <div className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg bg-white/10">
-        <Leaf className="h-4 w-4 text-white" />
+      <div className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg overflow-hidden"
+        style={{ background: "rgba(240,180,41,0.12)", border: "1px solid rgba(240,180,41,0.22)" }}>
+        <Image src="/logo-encuentro.png" alt="El Encuentro" width={28} height={28} className="object-contain" />
       </div>
       {!collapsed && (
         <div className="flex flex-col min-w-0 overflow-hidden">
           <span className="text-sm font-bold text-sidebar-foreground leading-tight whitespace-nowrap">
-            El Cielo
+            El Encuentro
           </span>
           <span className="text-[9px] text-sidebar-foreground/40 font-medium uppercase tracking-wider whitespace-nowrap">
-            Gestión Finca
+            Café Tostado
           </span>
         </div>
       )}

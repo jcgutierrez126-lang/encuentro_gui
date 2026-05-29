@@ -1,30 +1,26 @@
 "use client"
 
-import { useState } from "react"
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
+  ShoppingBag,
+  Package,
+  FlaskConical,
+  Truck,
+  Users,
   Wallet,
   TrendingDown,
   TrendingUp,
-  Users,
   ArrowLeftRight,
-  FileText,
-  Package,
+  Building2,
   Coffee,
-  Banana,
-  Flower2,
-  FlaskConical,
-  UserCheck,
-  CalendarDays,
-  Landmark,
-  PiggyBank,
-  ScanSearch,
+  Leaf,
   Settings,
   UserCircle,
-  Building2,
+  Landmark,
+  PiggyBank,
 } from "lucide-react"
 import {
   SidebarGroup,
@@ -43,47 +39,44 @@ import {
 } from "@/components/ui/accordion"
 import { cn } from "@/lib/utils"
 
-/* ─── Nav structure ─── */
 const topLinks = [
-  { href: "/resumen",  label: "Resumen",    icon: LayoutDashboard },
+  { href: "/resumen", label: "Resumen", icon: LayoutDashboard },
 ]
 
 const groups = [
+  {
+    id: "cafe",
+    label: "Café",
+    icon: Coffee,
+    links: [
+      { href: "/cafe/ventas",     label: "Ventas",     icon: ShoppingBag },
+      { href: "/cafe/inventario", label: "Inventario", icon: Package },
+      { href: "/cafe/procesos",   label: "Procesos",   icon: FlaskConical },
+      { href: "/cafe/compras",    label: "Compras",    icon: Truck },
+      { href: "/cafe/clientes",   label: "Clientes",   icon: Users },
+    ],
+  },
   {
     id: "finanzas",
     label: "Finanzas",
     icon: Wallet,
     links: [
-      { href: "/finanzas/cuentas",       label: "Cuentas",       icon: Landmark },
-      { href: "/finanzas/egresos",        label: "Egresos",       icon: TrendingDown },
-      { href: "/finanzas/ingresos",       label: "Ingresos",      icon: TrendingUp },
-      { href: "/finanzas/proveedores",    label: "Proveedores",   icon: Building2 },
-      { href: "/finanzas/transacciones",  label: "Transacciones", icon: ArrowLeftRight },
-      { href: "/finanzas/inversiones",    label: "Inversiones CDT", icon: PiggyBank },
+      { href: "/finanzas/cuentas",      label: "Cuentas",       icon: Landmark },
+      { href: "/finanzas/egresos",       label: "Egresos",       icon: TrendingDown },
+      { href: "/finanzas/ingresos",      label: "Ingresos",      icon: TrendingUp },
+      { href: "/finanzas/proveedores",   label: "Proveedores",   icon: Building2 },
+      { href: "/finanzas/transacciones", label: "Transacciones", icon: ArrowLeftRight },
+      { href: "/finanzas/inversiones",   label: "Inversiones",   icon: PiggyBank },
     ],
   },
   {
-    id: "produccion",
-    label: "Producción",
-    icon: Package,
+    id: "maestros",
+    label: "Maestros",
+    icon: Leaf,
     links: [
-      { href: "/produccion/lotes",              label: "Lotes",             icon: Package },
-      { href: "/produccion/ventas-cafe",        label: "Ventas Café",       icon: Coffee },
-      { href: "/produccion/ventas-banano",      label: "Ventas Banano",     icon: Banana },
-      { href: "/produccion/floraciones",        label: "Floraciones",       icon: Flower2 },
-      { href: "/produccion/mezclas-abono",      label: "Mezclas Abono",     icon: FlaskConical },
-      { href: "/produccion/observaciones",      label: "Observaciones",     icon: FileText },
-    ],
-  },
-  {
-    id: "nomina",
-    label: "Nómina",
-    icon: Users,
-    links: [
-      { href: "/nomina/empleados",       label: "Empleados",      icon: UserCheck },
-      { href: "/nomina/control-semanal", label: "Control Semanal",icon: CalendarDays },
-      { href: "/nomina/digitalizador",   label: "Verificador",    icon: ScanSearch },
-      { href: "/nomina/prestamos",       label: "Préstamos",      icon: Wallet },
+      { href: "/cafe/vendedores", label: "Vendedores", icon: Users },
+      { href: "/cafe/productos",  label: "Productos",  icon: Package },
+      { href: "/cafe/calidades",  label: "Calidades",  icon: Coffee },
     ],
   },
 ]
@@ -93,9 +86,8 @@ const bottomLinks = [
   { href: "/settings", label: "Configuración", icon: Settings },
 ]
 
-/* ─── Helper: active group ─── */
 function activeGroup(pathname: string) {
-  return groups.find((g) => g.links.some((l) => pathname === l.href || pathname.startsWith(l.href + "/")))?.id
+  return groups.find(g => g.links.some(l => pathname === l.href || pathname.startsWith(l.href + "/")))?.id
 }
 
 export function NavLinks() {
@@ -128,9 +120,7 @@ export function NavLinks() {
       <SidebarGroup>
         <SidebarGroupLabel>General</SidebarGroupLabel>
         <SidebarGroupContent>
-          <SidebarMenu>
-            {topLinks.map(renderLink)}
-          </SidebarMenu>
+          <SidebarMenu>{topLinks.map(renderLink)}</SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
 
@@ -138,32 +128,22 @@ export function NavLinks() {
         <SidebarGroup>
           <SidebarGroupLabel>Módulos</SidebarGroupLabel>
           <SidebarGroupContent>
-            <Accordion
-              type="single"
-              collapsible
-              value={open}
-              onValueChange={setOpen}
-              className="w-full"
-            >
-              {groups.map((group) => {
+            <Accordion type="single" collapsible value={open} onValueChange={setOpen} className="w-full">
+              {groups.map(group => {
                 const GroupIcon = group.icon
-                const isGroupActive = group.links.some((l) => pathname === l.href || pathname.startsWith(l.href + "/"))
+                const isGroupActive = group.links.some(l => pathname === l.href || pathname.startsWith(l.href + "/"))
                 return (
                   <AccordionItem key={group.id} value={group.id} className="border-none">
-                    <AccordionTrigger
-                      className={cn(
-                        "flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline [&>svg.lucide-chevron-down]:ml-auto [&>svg.lucide-chevron-down]:flex-shrink-0",
-                        isGroupActive && "bg-sidebar-accent/50 text-sidebar-accent-foreground font-medium"
-                      )}
-                    >
+                    <AccordionTrigger className={cn(
+                      "flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:no-underline [&>svg.lucide-chevron-down]:ml-auto [&>svg.lucide-chevron-down]:flex-shrink-0",
+                      isGroupActive && "bg-sidebar-accent/50 text-sidebar-accent-foreground font-medium"
+                    )}>
                       <GroupIcon className="h-4 w-4 flex-shrink-0" />
                       <span className="flex-1 text-left">{group.label}</span>
                     </AccordionTrigger>
                     <AccordionContent className="pb-0 pt-0.5">
                       <div className="ml-3 border-l border-sidebar-border pl-3 flex flex-col gap-0.5 py-1">
-                        <SidebarMenu>
-                          {group.links.map(renderLink)}
-                        </SidebarMenu>
+                        <SidebarMenu>{group.links.map(renderLink)}</SidebarMenu>
                       </div>
                     </AccordionContent>
                   </AccordionItem>
@@ -177,18 +157,14 @@ export function NavLinks() {
       {collapsed && (
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
-              {groups.flatMap((g) => g.links).map(renderLink)}
-            </SidebarMenu>
+            <SidebarMenu>{groups.flatMap(g => g.links).map(renderLink)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       )}
 
       <SidebarGroup className="mt-auto border-t border-sidebar-border pt-2">
         <SidebarGroupContent>
-          <SidebarMenu>
-            {bottomLinks.map(renderLink)}
-          </SidebarMenu>
+          <SidebarMenu>{bottomLinks.map(renderLink)}</SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
     </>
