@@ -12,15 +12,12 @@ import {
   Users,
   Wallet,
   TrendingDown,
-  TrendingUp,
-  ArrowLeftRight,
   Building2,
   Coffee,
   Leaf,
   Settings,
   UserCircle,
   Landmark,
-  PiggyBank,
 } from "lucide-react"
 import {
   SidebarGroup,
@@ -38,67 +35,74 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { cn } from "@/lib/utils"
+import { getUser, isAdmin } from "@/lib/auth"
 
 const topLinks = [
   { href: "/resumen", label: "Resumen", icon: LayoutDashboard },
 ]
 
-const groups = [
-  {
-    id: "cafe",
-    label: "Café",
-    icon: Coffee,
-    links: [
-      { href: "/cafe/ventas",     label: "Ventas",     icon: ShoppingBag },
-      { href: "/cafe/inventario", label: "Inventario", icon: Package },
-      { href: "/cafe/procesos",   label: "Procesos",   icon: FlaskConical },
-      { href: "/cafe/compras",    label: "Compras",    icon: Truck },
-      { href: "/cafe/clientes",   label: "Clientes",   icon: Users },
-    ],
-  },
-  {
-    id: "finanzas",
-    label: "Finanzas",
-    icon: Wallet,
-    links: [
-      { href: "/finanzas/cuentas",      label: "Cuentas",       icon: Landmark },
-      { href: "/finanzas/egresos",       label: "Egresos",       icon: TrendingDown },
-      { href: "/finanzas/ingresos",      label: "Ingresos",      icon: TrendingUp },
-      { href: "/finanzas/proveedores",   label: "Proveedores",   icon: Building2 },
-      { href: "/finanzas/transacciones", label: "Transacciones", icon: ArrowLeftRight },
-      { href: "/finanzas/inversiones",   label: "Inversiones",   icon: PiggyBank },
-    ],
-  },
-  {
-    id: "maestros",
-    label: "Maestros",
-    icon: Leaf,
-    links: [
-      { href: "/cafe/vendedores", label: "Vendedores", icon: Users },
-      { href: "/cafe/productos",  label: "Productos",  icon: Package },
-      { href: "/cafe/calidades",  label: "Calidades",  icon: Coffee },
-    ],
-  },
-]
+// Módulos siempre visibles
+const groupsCafe = {
+  id: "cafe",
+  label: "Café",
+  icon: Coffee,
+  links: [
+    { href: "/cafe/ventas",     label: "Ventas",     icon: ShoppingBag },
+    { href: "/cafe/inventario", label: "Inventario", icon: Package },
+    { href: "/cafe/procesos",   label: "Procesos",   icon: FlaskConical },
+    { href: "/cafe/compras",    label: "Compras",    icon: Truck },
+    { href: "/cafe/clientes",   label: "Clientes",   icon: Users },
+  ],
+}
+
+// Finanzas: solo lo especificado en el proyecto
+const groupsFinanzas = {
+  id: "finanzas",
+  label: "Finanzas",
+  icon: Wallet,
+  links: [
+    { href: "/finanzas/cuentas",    label: "Cuentas",    icon: Landmark },
+    { href: "/finanzas/egresos",    label: "Egresos",    icon: TrendingDown },
+    { href: "/finanzas/proveedores",label: "Proveedores",icon: Building2 },
+  ],
+}
+
+// Maestros: solo visible para administradores
+const groupsMaestros = {
+  id: "maestros",
+  label: "Maestros",
+  icon: Leaf,
+  links: [
+    { href: "/cafe/vendedores", label: "Vendedores", icon: Users },
+    { href: "/cafe/productos",  label: "Productos",  icon: Package },
+    { href: "/cafe/calidades",  label: "Calidades",  icon: Coffee },
+  ],
+}
 
 const bottomLinks = [
   { href: "/profile",  label: "Mi perfil",     icon: UserCircle },
   { href: "/settings", label: "Configuración", icon: Settings },
 ]
 
-function activeGroup(pathname: string) {
+function activeGroups(pathname: string, groups: typeof groupsCafe[]) {
   return groups.find(g => g.links.some(l => pathname === l.href || pathname.startsWith(l.href + "/")))?.id
 }
 
 export function NavLinks() {
   const pathname = usePathname()
   const { collapsed } = useSidebar()
-  const [open, setOpen] = useState<string | undefined>(activeGroup(pathname))
+  const [open, setOpen] = useState<string | undefined>()
+  const [admin, setAdmin] = useState(false)
 
   useEffect(() => {
-    const g = activeGroup(pathname)
-    if (g) setOpen(g)
+    const user = getUser()
+    setAdmin(isAdmin(user))
+    const groups = [groupsCafe, groupsFinanzas, ...(isAdmin(user) ? [groupsMaestros] : [])]
+    const active = activeGroups(pathname, groups)
+    if (active) setOpen(active)
   }, [pathname])
+
+  const groups = [groupsCafe, groupsFinanzas, ...(admin ? [groupsMaestros] : [])]
 
   const renderLink = (item: { href: string; label: string; icon: React.ElementType }) => {
     const Icon = item.icon

@@ -11,7 +11,7 @@ const Beams = dynamic(() => import("@/components/beams"), { ssr: false })
 const MODULOS = [
   { icon: ShoppingBag, label: "Ventas" },
   { icon: Package,     label: "Inventario" },
-  { icon: BarChart2,   label: "Reportes" },
+  { icon: BarChart2,   label: "Procesos" },
   { icon: TrendingUp,  label: "Finanzas" },
 ]
 

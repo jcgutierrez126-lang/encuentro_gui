@@ -9,19 +9,19 @@ export interface AuthUser {
   last_login?: string | null
 }
 
-const TOKEN_KEY = "cielo_access"
-const USER_KEY = "cielo_user"
+const TOKEN_KEY = "encuentro_access"
+const USER_KEY  = "encuentro_user"
 
 export function saveAuth(access: string, user: AuthUser) {
   localStorage.setItem(TOKEN_KEY, access)
   localStorage.setItem(USER_KEY, JSON.stringify(user))
-  document.cookie = `cielo_token=1; path=/; max-age=${8 * 3600}; SameSite=Lax`
+  document.cookie = `encuentro_token=1; path=/; max-age=${8 * 3600}; SameSite=Lax`
 }
 
 export function clearAuth() {
   localStorage.removeItem(TOKEN_KEY)
   localStorage.removeItem(USER_KEY)
-  document.cookie = "cielo_token=; path=/; max-age=0"
+  document.cookie = "encuentro_token=; path=/; max-age=0"
 }
 
 export function getToken(): string | null {
@@ -42,6 +42,10 @@ export function getUser(): AuthUser | null {
 
 export function isAuthenticated(): boolean {
   return !!getToken()
+}
+
+export function isAdmin(user: AuthUser | null): boolean {
+  return user?.role === "administrador" || user?.is_superuser === true
 }
 
 const ROLE_LABELS: Record<string, string> = {
