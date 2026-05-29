@@ -46,20 +46,20 @@ export default function LandingPage() {
       >
         {/* Logo */}
         <div
-          className="h-36 w-36 rounded-3xl overflow-hidden flex items-center justify-center mb-7"
+          className="h-52 w-52 rounded-3xl overflow-hidden flex items-center justify-center mb-7"
           style={{
-            background: "rgba(240,180,41,0.08)",
-            border: "1px solid rgba(240,180,41,0.2)",
-            boxShadow: "0 0 60px rgba(240,180,41,0.18), 0 0 120px rgba(240,180,41,0.08)",
+            background: "rgba(240,180,41,0.07)",
+            border: "1px solid rgba(240,180,41,0.18)",
+            boxShadow: "0 0 80px rgba(240,180,41,0.2), 0 0 160px rgba(240,180,41,0.08)",
           }}
         >
           <Image
             src="/logo-encuentro.png"
             alt="El Encuentro"
-            width={116}
-            height={116}
-            className="object-contain p-2"
-            style={{ filter: "drop-shadow(0 4px 20px rgba(240,180,41,0.5))" }}
+            width={192}
+            height={192}
+            className="object-contain p-3"
+            style={{ filter: "drop-shadow(0 6px 28px rgba(240,180,41,0.55))" }}
             priority
           />
         </div>
