@@ -159,7 +159,7 @@ function ImportModal({
   // Proveedor de la venta (COMSAB) y de egresos
   const tieneDeducciones = (factura.deducciones?.length ?? 0) > 0
   const [crearEgresos, setCrearEgresos] = useState(tieneDeducciones)
-  const [proveedores, setProveedores] = useState<{ id: number; nombre: string; cedula_nit: string }[]>([])
+  const [proveedores, setProveedores] = useState<{ id: number; nombre: string; cedula_nit: string | null }[]>([])
   const [ventaProveedorId, setVentaProveedorId] = useState("")
   const [egresoProveedorId, setEgresoProveedorId] = useState("")
   const [egresoFacuradoA, setEgresoFacuradoA] = useState("Natalia Gutierrez")
