@@ -39,7 +39,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-export type TipoCuenta = "bancaria" | "efectivo" | "prestamo" | "agencia" | "dividendos"
+export type TipoCuenta = "bancaria" | "efectivo" | "prestamo" | "agencia" | "dividendos" | "inversion"
 export type EstadoEgreso = "pagada" | "pendiente" | "parcial"
 export type CalidadFloracion = "buena" | "regular" | "muy_buena" | "excelente"
 
@@ -144,12 +144,15 @@ export interface Cuenta {
 export interface Proveedor {
   id: number
   nombre: string
-  telefono: string
-  celular: string
-  cedula_nit: string
+  telefono: string | null
+  celular: string | null
+  cedula_nit: string | null
   ciudad: number | null
   ciudad_nombre: string | null
-  email: string
+  email: string | null
+  direccion: string | null
+  comentarios: string | null
+  activo?: boolean
   created_at: string
 }
 

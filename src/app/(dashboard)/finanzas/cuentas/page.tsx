@@ -1,51 +1,93 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Plus, Loader2, X } from "lucide-react"
-import { api, type Cuenta, type TipoCuenta, type ResumenCuenta } from "@/lib/api"
+import { Plus, Loader2, X, Pencil, Trash2, Building2, Wallet, CreditCard, Briefcase, TrendingUp, DollarSign } from "lucide-react"
+import { api, type Cuenta, type TipoCuenta } from "@/lib/api"
 
+// ── Tipos ─────────────────────────────────────────────────────────────────────
 const TIPOS: [TipoCuenta, string][] = [
-  ["bancaria", "Bancaria"],
-  ["efectivo", "Efectivo"],
-  ["prestamo", "Préstamo"],
-  ["agencia", "Agencia"],
+  ["bancaria",   "Bancaria"],
+  ["efectivo",   "Efectivo"],
+  ["prestamo",   "Préstamo"],
+  ["agencia",    "Agencia / Cooperativa"],
   ["dividendos", "Dividendos"],
+  ["inversion",  "Inversión / CDT"],
 ]
 
-function fmt(n: string | number | null | undefined) {
-  if (n === null || n === undefined) return "—"
+const TIPO_BADGE: Record<string, string> = {
+  bancaria:   "bg-blue-500/20 text-blue-300 border border-blue-500/30",
+  efectivo:   "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30",
+  prestamo:   "bg-red-500/20 text-red-300 border border-red-500/30",
+  agencia:    "bg-purple-500/20 text-purple-300 border border-purple-500/30",
+  dividendos: "bg-amber-500/20 text-amber-300 border border-amber-500/30",
+  inversion:  "bg-cyan-500/20 text-cyan-300 border border-cyan-500/30",
+}
+
+const TIPO_ICON: Record<string, React.ReactNode> = {
+  bancaria:   <Building2 className="h-4 w-4" />,
+  efectivo:   <Wallet className="h-4 w-4" />,
+  prestamo:   <CreditCard className="h-4 w-4" />,
+  agencia:    <Briefcase className="h-4 w-4" />,
+  dividendos: <DollarSign className="h-4 w-4" />,
+  inversion:  <TrendingUp className="h-4 w-4" />,
+}
+
+function cop(n: string | number | null | undefined) {
+  if (n == null || n === "") return "—"
   const num = Number(n)
   if (isNaN(num)) return "—"
   return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(num)
 }
 
+// ── Form ──────────────────────────────────────────────────────────────────────
 interface FormData {
   nombre: string
   tipo: TipoCuenta
-  saldo: string
+  saldo_inicial: string
   numero_cuenta: string
   banco: string
-  descripcion: string
-  activa: boolean
 }
 
 const EMPTY: FormData = {
-  nombre: "",
-  tipo: "bancaria",
-  saldo: "",
-  numero_cuenta: "",
-  banco: "",
-  descripcion: "",
-  activa: true,
+  nombre:       "",
+  tipo:         "bancaria",
+  saldo_inicial:"0",
+  numero_cuenta:"",
+  banco:        "",
 }
 
-function FormCuenta({ onGuardado, onCerrar }: { onGuardado: () => void; onCerrar: () => void }) {
-  const [form, setForm] = useState<FormData>(EMPTY)
+function cuentaToForm(c: Cuenta): FormData {
+  return {
+    nombre:        c.nombre,
+    tipo:          c.tipo,
+    saldo_inicial: c.saldo ?? "0",
+    numero_cuenta: c.numero_cuenta ?? "",
+    banco:         c.banco ?? "",
+  }
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function ModalCuenta({
+  cuenta,
+  onGuardado,
+  onCerrar,
+  onEliminar,
+}: {
+  cuenta: Cuenta | null
+  onGuardado: () => void
+  onCerrar: () => void
+  onEliminar?: () => void
+}) {
+  const esEdicion = cuenta !== null
+  const [form, setForm] = useState<FormData>(cuenta ? cuentaToForm(cuenta) : EMPTY)
   const [guardando, setGuardando] = useState(false)
+  const [eliminando, setEliminando] = useState(false)
+  const [confirmarEliminar, setConfirmarEliminar] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const set = (k: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }))
+  const set = (k: keyof FormData) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+      setForm(f => ({ ...f, [k]: e.target.value }))
 
   async function guardar(ev: React.FormEvent) {
     ev.preventDefault()
@@ -56,15 +98,18 @@ function FormCuenta({ onGuardado, onCerrar }: { onGuardado: () => void; onCerrar
     setGuardando(true)
     setError(null)
     try {
-      await api.finanzas.cuentas.create({
-        nombre: form.nombre,
-        tipo: form.tipo,
-        saldo: form.saldo || "0",
+      const payload = {
+        nombre:        form.nombre,
+        tipo:          form.tipo,
+        saldo:         form.saldo_inicial || "0",
         numero_cuenta: form.numero_cuenta || undefined,
-        banco: form.banco || undefined,
-        descripcion: form.descripcion || undefined,
-        activa: form.activa,
-      })
+        banco:         form.banco || undefined,
+      }
+      if (esEdicion && cuenta) {
+        await api.finanzas.cuentas.update(cuenta.id, payload)
+      } else {
+        await api.finanzas.cuentas.create(payload)
+      }
       onGuardado()
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Error al guardar")
@@ -72,77 +117,111 @@ function FormCuenta({ onGuardado, onCerrar }: { onGuardado: () => void; onCerrar
     }
   }
 
+  async function eliminar() {
+    if (!cuenta) return
+    setEliminando(true)
+    try {
+      await api.finanzas.cuentas.delete(cuenta.id)
+      onEliminar?.()
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Error al eliminar")
+      setEliminando(false)
+      setConfirmarEliminar(false)
+    }
+  }
+
   const field = "flex flex-col gap-1"
-  const label = "text-xs font-medium text-muted-foreground"
-  const input = "text-sm border border-border rounded-md px-3 py-1.5 bg-background focus:outline-none focus:ring-1 focus:ring-primary"
+  const lbl   = "text-xs font-medium text-muted-foreground"
+  const inp   = "text-sm border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-[#F0B429] text-[rgba(255,240,210,0.88)]"
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <h2 className="font-semibold">Nueva cuenta</h2>
-          <button onClick={onCerrar}><X className="h-4 w-4" /></button>
+          <h2 className="font-semibold text-[rgba(255,240,210,0.88)]">
+            {esEdicion ? "Editar cuenta" : "Nueva cuenta"}
+          </h2>
+          <button onClick={onCerrar} className="text-muted-foreground hover:text-foreground">
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
         <form onSubmit={guardar} className="p-5 space-y-4">
           {error && (
-            <p className="text-xs text-destructive bg-destructive/10 rounded-md px-3 py-2">{error}</p>
+            <p className="text-xs text-red-400 bg-red-500/10 rounded-lg px-3 py-2 border border-red-500/20">
+              {error}
+            </p>
           )}
 
           <div className={field}>
-            <label className={label}>Nombre *</label>
-            <input value={form.nombre} onChange={set("nombre")} placeholder="Ej: Bancolombia ahorros" className={input} required />
+            <label className={lbl}>Nombre *</label>
+            <input value={form.nombre} onChange={set("nombre")}
+              placeholder="Ej: Bancolombia ahorros" className={inp} required />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className={field}>
-              <label className={label}>Tipo *</label>
-              <select value={form.tipo} onChange={set("tipo")} className={input} required>
+              <label className={lbl}>Tipo *</label>
+              <select value={form.tipo} onChange={set("tipo")} className={inp} required>
                 {TIPOS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
               </select>
             </div>
             <div className={field}>
-              <label className={label}>Saldo inicial ($)</label>
-              <input type="number" step="any" value={form.saldo} onChange={set("saldo")} className={input} placeholder="0" />
+              <label className={lbl}>Saldo inicial ($)</label>
+              <input type="number" step="any" value={form.saldo_inicial} onChange={set("saldo_inicial")}
+                className={inp} placeholder="0" />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className={field}>
-              <label className={label}>Número de cuenta</label>
-              <input value={form.numero_cuenta} onChange={set("numero_cuenta")} className={input} placeholder="Ej: 02945202842" />
+              <label className={lbl}>Número de cuenta</label>
+              <input value={form.numero_cuenta} onChange={set("numero_cuenta")}
+                className={inp} placeholder="02945202842" />
             </div>
             <div className={field}>
-              <label className={label}>Banco / Entidad</label>
-              <input value={form.banco} onChange={set("banco")} className={input} placeholder="Ej: Bancolombia" />
+              <label className={lbl}>Banco / Entidad</label>
+              <input value={form.banco} onChange={set("banco")}
+                className={inp} placeholder="Bancolombia" />
             </div>
           </div>
 
-          <div className={field}>
-            <label className={label}>Descripción</label>
-            <textarea value={form.descripcion} onChange={set("descripcion")} rows={2}
-              className={`${input} resize-none`} placeholder="Opcional" />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="activa"
-              checked={form.activa}
-              onChange={e => setForm(f => ({ ...f, activa: e.target.checked }))}
-              className="h-4 w-4 rounded border-border"
-            />
-            <label htmlFor="activa" className={label}>Cuenta activa</label>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={onCerrar}
-              className="text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted">Cancelar</button>
-            <button type="submit" disabled={guardando}
-              className="text-sm px-5 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 font-semibold disabled:opacity-50 flex items-center gap-2">
-              {guardando && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-              Guardar
-            </button>
+          <div className="flex items-center justify-between gap-2 pt-2">
+            {esEdicion && !confirmarEliminar && (
+              <button type="button" onClick={() => setConfirmarEliminar(true)}
+                className="text-sm px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 border border-red-500/20 flex items-center gap-1.5">
+                <Trash2 className="h-3.5 w-3.5" />
+                Eliminar
+              </button>
+            )}
+            {confirmarEliminar && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-red-400">¿Confirmar?</span>
+                <button type="button" onClick={eliminar} disabled={eliminando}
+                  className="text-xs px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 flex items-center gap-1">
+                  {eliminando && <Loader2 className="h-3 w-3 animate-spin" />}
+                  Sí, eliminar
+                </button>
+                <button type="button" onClick={() => setConfirmarEliminar(false)}
+                  className="text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-muted">
+                  Cancelar
+                </button>
+              </div>
+            )}
+            {!confirmarEliminar && (
+              <div className="flex gap-2 ml-auto">
+                <button type="button" onClick={onCerrar}
+                  className="text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted">
+                  Cancelar
+                </button>
+                <button type="submit" disabled={guardando}
+                  style={{ background: "linear-gradient(135deg, #F0B429 0%, #C88A1A 100%)", color: "#3D1F00" }}
+                  className="text-sm px-5 py-2 rounded-lg font-semibold disabled:opacity-50 flex items-center gap-2">
+                  {guardando && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                  Guardar
+                </button>
+              </div>
+            )}
           </div>
         </form>
       </div>
@@ -150,132 +229,138 @@ function FormCuenta({ onGuardado, onCerrar }: { onGuardado: () => void; onCerrar
   )
 }
 
+// ── Página ────────────────────────────────────────────────────────────────────
 export default function CuentasPage() {
-  const [cuentas, setCuentas] = useState<Cuenta[]>([])
-  const [saldosReales, setSaldosReales] = useState<Record<string, ResumenCuenta>>({})
-  const [loading, setLoading] = useState(true)
-  const [mostrarForm, setMostrarForm] = useState(false)
+  const [cuentas, setCuentas]       = useState<Cuenta[]>([])
+  const [loading, setLoading]       = useState(true)
+  const [modalAbierto, setModalAbierto] = useState(false)
+  const [cuentaEditar, setCuentaEditar] = useState<Cuenta | null>(null)
 
   const cargar = () => {
     setLoading(true)
-    Promise.all([
-      api.finanzas.cuentas.list(),
-      api.finanzas.resumen(),
-    ]).then(([cs, resumen]) => {
-      setCuentas(cs)
-      const map: Record<string, ResumenCuenta> = {}
-      for (const rc of resumen.cuentas) map[rc.nombre] = rc
-      setSaldosReales(map)
-    }).finally(() => setLoading(false))
+    api.finanzas.cuentas.list()
+      .then(cs => setCuentas(cs))
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => { cargar() }, [])
 
-  const totalSaldo = Object.values(saldosReales).reduce((s, rc) => s + Number(rc.saldo), 0)
+  function abrirNueva() { setCuentaEditar(null); setModalAbierto(true) }
+  function abrirEditar(c: Cuenta) { setCuentaEditar(c); setModalAbierto(true) }
+  function cerrarModal() { setModalAbierto(false); setCuentaEditar(null) }
+
+  const totalSaldo = cuentas.reduce((s, c) => s + Number(c.saldo ?? 0), 0)
 
   return (
-    <div className="space-y-5">
-      {mostrarForm && (
-        <FormCuenta
-          onGuardado={() => { cargar(); setMostrarForm(false) }}
-          onCerrar={() => setMostrarForm(false)}
+    <div className="space-y-5" style={{ color: "rgba(255,240,210,0.88)" }}>
+      {modalAbierto && (
+        <ModalCuenta
+          cuenta={cuentaEditar}
+          onGuardado={() => { cerrarModal(); cargar() }}
+          onCerrar={cerrarModal}
+          onEliminar={() => { cerrarModal(); cargar() }}
         />
       )}
 
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="flex-1">
           <h1 className="text-2xl font-bold tracking-tight">Cuentas</h1>
           <p className="text-muted-foreground text-sm mt-0.5">
-            Saldo = saldo inicial + ingresos (café + banano + otros) − egresos ± transferencias.
+            Gestión de cuentas bancarias, efectivo e inversiones.
           </p>
         </div>
-        <button onClick={() => setMostrarForm(true)}
-          className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 font-medium">
+        <button
+          onClick={abrirNueva}
+          style={{ background: "linear-gradient(135deg, #F0B429 0%, #C88A1A 100%)", color: "#3D1F00" }}
+          className="flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg font-medium shrink-0">
           <Plus className="h-4 w-4" />
           Nueva cuenta
         </button>
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">{cuentas.length} cuentas</p>
-        <div className="text-right">
-          <p className="text-xs text-muted-foreground">Saldo total real</p>
-          <p className="text-lg font-bold">{fmt(totalSaldo)}</p>
+      {/* KPI total */}
+      <div className="rounded-xl border border-border bg-card px-5 py-4 flex items-center justify-between">
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Saldo total inicial
+          </p>
+          <p className="text-2xl font-bold tabular-nums mt-1" style={{ color: "#F0B429" }}>
+            {cop(totalSaldo)}
+          </p>
         </div>
+        <p className="text-xs text-muted-foreground">{cuentas.length} cuentas</p>
       </div>
 
-      <div className="rounded-xl border border-border overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border bg-muted/40 text-xs text-muted-foreground uppercase tracking-wide">
-                <th className="px-3 py-2.5 text-left">Nombre</th>
-                <th className="px-3 py-2.5 text-left">Tipo</th>
-                <th className="px-3 py-2.5 text-right">Saldo real</th>
-                <th className="px-3 py-2.5 text-right">Ingresos</th>
-                <th className="px-3 py-2.5 text-right">Egresos</th>
-                <th className="px-3 py-2.5 text-right">Transferencias</th>
-                <th className="px-3 py-2.5 text-center">Activa</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <tr><td colSpan={7} className="text-center py-12">
-                  <Loader2 className="h-5 w-5 animate-spin mx-auto text-muted-foreground" />
-                </td></tr>
-              ) : cuentas.length === 0 ? (
-                <tr><td colSpan={7} className="text-center py-12 text-sm text-muted-foreground">
-                  Sin cuentas registradas.
-                </td></tr>
-              ) : cuentas.map(c => {
-                const rc = saldosReales[c.nombre]
-                const totalIngresos = rc
-                  ? Number(rc.ingresos) + Number(rc.pagos)
-                  : 0
-                const traslados = rc ? Number(rc.from) - Number(rc.to) : 0
-                const partes = rc && Number(rc.ingresos) ? [`Ingresos ${fmt(rc.ingresos)}`] : []
-                return (
-                  <tr key={c.id} className="border-b border-border hover:bg-muted/30 text-sm">
-                    <td className="px-3 py-2">
-                      <p className="font-medium">{c.nombre}</p>
-                      <p className="text-[10px] text-muted-foreground">inicial: {fmt(c.saldo)}</p>
-                    </td>
-                    <td className="px-3 py-2 capitalize text-muted-foreground">{c.tipo.replace(/_/g, " ")}</td>
-                    <td className="px-3 py-2 text-right tabular-nums font-semibold">
-                      {rc ? fmt(rc.saldo) : fmt(c.saldo)}
-                    </td>
-                    <td className="px-3 py-2 text-right tabular-nums">
-                      {totalIngresos ? (
-                        <>
-                          <p className="text-emerald-600 font-medium">{fmt(totalIngresos)}</p>
-                          {partes.length > 0 && (
-                            <p className="text-[10px] text-muted-foreground/70">{partes.join(" · ")}</p>
-                          )}
-                        </>
-                      ) : "—"}
-                    </td>
-                    <td className="px-3 py-2 text-right tabular-nums text-red-600">
-                      {rc && Number(rc.egresos) ? fmt(rc.egresos) : "—"}
-                    </td>
-                    <td className="px-3 py-2 text-right tabular-nums">
-                      {traslados !== 0 ? (
-                        <span className={traslados > 0 ? "text-blue-500" : "text-zinc-500"}>
-                          {traslados > 0 ? "+" : ""}{fmt(traslados)}
-                        </span>
-                      ) : "—"}
-                    </td>
-                    <td className="px-3 py-2 text-center">
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${c.activa ? "bg-green-100 text-green-800" : "bg-muted text-muted-foreground"}`}>
-                        {c.activa ? "Activa" : "Inactiva"}
-                      </span>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+      {/* Grid de cards */}
+      {loading ? (
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
-      </div>
+      ) : cuentas.length === 0 ? (
+        <div className="text-center py-16 text-sm text-muted-foreground">
+          Sin cuentas registradas.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {cuentas.map(c => (
+            <div
+              key={c.id}
+              className="rounded-xl border border-border bg-card p-5 flex flex-col gap-3 hover:border-[#F0B429]/40 transition-colors group"
+            >
+              {/* Top row */}
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <span className={`p-2 rounded-lg ${TIPO_BADGE[c.tipo] ?? "bg-muted text-muted-foreground"}`}>
+                    {TIPO_ICON[c.tipo]}
+                  </span>
+                  <div>
+                    <p className="font-semibold text-sm leading-tight">{c.nombre}</p>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${TIPO_BADGE[c.tipo] ?? "bg-muted text-muted-foreground"}`}>
+                      {TIPOS.find(t => t[0] === c.tipo)?.[1] ?? c.tipo}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => abrirEditar(c)}
+                  className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-muted/40 text-muted-foreground hover:text-foreground transition-all shrink-0">
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+              </div>
+
+              {/* Saldo */}
+              <div>
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Saldo inicial</p>
+                <p className="text-xl font-bold tabular-nums" style={{ color: "#F0B429" }}>
+                  {cop(c.saldo)}
+                </p>
+              </div>
+
+              {/* Detalles */}
+              <div className="flex flex-col gap-1 pt-1 border-t border-border">
+                {c.numero_cuenta && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-muted-foreground">N° cuenta</span>
+                    <span className="text-xs tabular-nums font-mono text-muted-foreground">{c.numero_cuenta}</span>
+                  </div>
+                )}
+                {c.banco && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-muted-foreground">Banco</span>
+                    <span className="text-xs font-medium">{c.banco}</span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-muted-foreground">Estado</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${c.activa ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-muted text-muted-foreground"}`}>
+                    {c.activa ? "Activa" : "Inactiva"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
