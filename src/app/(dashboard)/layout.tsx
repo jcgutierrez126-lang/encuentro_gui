@@ -102,8 +102,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     setUser(u)
 
     const refresh = () => { const updated = getUser(); if (updated) setUser(updated) }
-    window.addEventListener("cielo-user-updated", refresh)
-    return () => window.removeEventListener("cielo-user-updated", refresh)
+    window.addEventListener("encuentro-user-updated", refresh)
+    return () => window.removeEventListener("encuentro-user-updated", refresh)
   }, [router])
 
   function handleLogout() {
