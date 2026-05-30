@@ -122,67 +122,99 @@ function KpiCard({
   )
 }
 
-// ─── ROI Card ─────────────────────────────────────────────────────────────
+// ─── Análisis Financiero ──────────────────────────────────────────────────
 
-function RoiCard({ roi }: { roi: number }) {
-  const positive = roi >= 0
-  const colorText = positive ? "text-emerald-400" : "text-red-400"
-  const colorBg   = positive ? "bg-emerald-400/10" : "bg-red-400/10"
-  const colorBdr  = positive ? "border-emerald-400/20" : "border-red-400/20"
-  const Icon      = positive ? TrendingUp : TrendingDown
+function AnalisisFinanciero({
+  totalVentas, totalCostos, roi, pe,
+}: { totalVentas: number; totalCostos: number; roi: number; pe: number }) {
+  const ganando   = totalVentas >= totalCostos
+  const resultNeto = totalVentas - totalCostos
+  const pct = totalCostos > 0 ? Math.min((totalVentas / totalCostos) * 100, 200) : 0
+  const pctDisplay = totalCostos > 0 ? ((totalVentas / totalCostos) * 100).toFixed(1) : "0.0"
 
   return (
-    <div className={`rounded-2xl border ${colorBdr} ${colorBg} p-5 flex gap-4 items-start`}>
-      <div className={`h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 ${colorBg} border ${colorBdr}`}>
-        <Icon className={`h-5 w-5 ${colorText}`} />
-      </div>
-      <div className="min-w-0">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">ROI</p>
-        <p className={`text-2xl font-black tabular-nums leading-none ${colorText}`}>
-          {roi > 0 ? "+" : ""}{roi.toFixed(1)}%
-        </p>
-        <p className="text-[11px] text-muted-foreground mt-0.5">
-          {positive ? "Operación rentable" : "Operación con pérdida"}
-        </p>
-      </div>
-    </div>
-  )
-}
+    <div className="space-y-3">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        Análisis Financiero
+      </p>
 
-// ─── Punto Equilibrio Card ────────────────────────────────────────────────
-
-function PECard({ pe, totalVentas }: { pe: number; totalVentas: number }) {
-  const superado = totalVentas >= pe
-  return (
-    <div className="rounded-2xl border border-border bg-card p-5 flex gap-4 items-start">
-      <div
-        className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0"
+      {/* Resultado neto */}
+      <div className="rounded-2xl p-5 flex items-center justify-between gap-4"
         style={{
-          background: superado ? "rgba(52,211,153,0.10)" : "rgba(255,240,210,0.05)",
-          border: `1px solid ${superado ? "rgba(52,211,153,0.22)" : "rgba(255,240,210,0.08)"}`,
-        }}
-      >
-        <Scale className="h-5 w-5" style={{ color: superado ? "rgb(52,211,153)" : "rgba(255,240,210,0.45)" }} />
+          background: ganando ? "rgba(52,211,153,0.08)" : "rgba(239,68,68,0.08)",
+          border: `1px solid ${ganando ? "rgba(52,211,153,0.2)" : "rgba(239,68,68,0.2)"}`,
+        }}>
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0"
+            style={{
+              background: ganando ? "rgba(52,211,153,0.12)" : "rgba(239,68,68,0.12)",
+              border: `1px solid ${ganando ? "rgba(52,211,153,0.25)" : "rgba(239,68,68,0.25)"}`,
+            }}>
+            {ganando
+              ? <TrendingUp className="h-4.5 w-4.5 text-emerald-400" />
+              : <TrendingDown className="h-4.5 w-4.5 text-red-400" />}
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Resultado Neto</p>
+            <p className="text-2xl font-black tabular-nums leading-none"
+              style={{ color: ganando ? "rgb(52,211,153)" : "rgb(248,113,113)" }}>
+              {cop(resultNeto)}
+            </p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              {ganando ? "El Encuentro está generando utilidad" : "Los costos superan los ingresos"}
+            </p>
+          </div>
+        </div>
+        <span className="text-sm font-black px-4 py-2 rounded-xl shrink-0"
+          style={{
+            background: ganando ? "rgba(52,211,153,0.15)" : "rgba(239,68,68,0.15)",
+            color: ganando ? "rgb(52,211,153)" : "rgb(248,113,113)",
+          }}>
+          {ganando ? "GANANDO" : "PERDIENDO"}
+        </span>
       </div>
-      <div className="min-w-0">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
-          Punto de Equilibrio
-        </p>
-        <p
-          className="text-xl font-black tabular-nums leading-none"
-          style={{ color: superado ? "rgb(52,211,153)" : "rgba(255,240,210,0.92)" }}
-        >
-          {cop(pe)}
-        </p>
-        {superado ? (
-          <p className="text-[11px] text-emerald-400 mt-0.5">
-            ✓ Superado en {cop(totalVentas - pe)}
-          </p>
-        ) : (
-          <p className="text-[11px] text-muted-foreground mt-0.5">
-            Faltan {cop(pe - totalVentas)}
-          </p>
-        )}
+
+      {/* KPIs fila */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: "Ingresos Totales", value: cop(totalVentas), sub: "Total ventas", color: "#F0B429" },
+          { label: "Costos Totales",   value: cop(totalCostos), sub: "Total egresos registrados", color: "rgba(248,113,113,0.9)" },
+          { label: "% ROI",            value: `${roi > 0 ? "+" : ""}${roi.toFixed(1)}%`, sub: "Retorno sobre costos", color: roi >= 0 ? "rgb(52,211,153)" : "rgb(248,113,113)" },
+        ].map(item => (
+          <div key={item.label} className="rounded-2xl border border-border bg-card p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">{item.label}</p>
+            <p className="text-lg font-black tabular-nums leading-none" style={{ color: item.color }}>{item.value}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">{item.sub}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Punto de equilibrio con barra */}
+      <div className="rounded-2xl border border-border bg-card p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Scale className="h-4 w-4 text-muted-foreground" />
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Punto de Equilibrio</p>
+        </div>
+        <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+          <span>Ingresos actuales: <span className="font-semibold" style={{ color: "rgba(255,240,210,0.8)" }}>{cop(totalVentas)}</span></span>
+          <span>Meta: <span className="font-semibold" style={{ color: "rgba(255,240,210,0.8)" }}>{cop(pe > 0 ? pe : totalCostos)}</span></span>
+        </div>
+        <div className="h-3 rounded-full overflow-hidden bg-muted mb-2">
+          <div className="h-full rounded-full transition-all duration-700"
+            style={{
+              width: `${Math.min(pct, 100)}%`,
+              background: ganando
+                ? "linear-gradient(90deg, rgba(52,211,153,0.7), rgb(52,211,153))"
+                : "linear-gradient(90deg, rgba(240,180,41,0.6), #F0B429)",
+            }} />
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] text-muted-foreground">$0 ── {pctDisplay}% cubierto</span>
+          <span className="text-sm font-bold"
+            style={{ color: ganando ? "rgb(52,211,153)" : "rgba(255,240,210,0.6)" }}>
+            {ganando ? `EXCEDE POR ${cop(resultNeto)}` : `Faltan ${cop(totalCostos - totalVentas)}`}
+          </span>
+        </div>
       </div>
     </div>
   )
@@ -316,11 +348,13 @@ export default function ResumenPage() {
         />
       </div>
 
-      {/* ROI + Punto de Equilibrio */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <RoiCard roi={roi} />
-        {pe > 0 && <PECard pe={pe} totalVentas={totalVentas} />}
-      </div>
+      {/* Análisis financiero completo */}
+      <AnalisisFinanciero
+        totalVentas={totalVentas}
+        totalCostos={totalCostos}
+        roi={roi}
+        pe={pe}
+      />
 
       {/* Costos desglosados */}
       <div className="rounded-2xl border border-border bg-card p-5">

@@ -73,19 +73,18 @@ function UserBadge({ user }: { user: AuthUser }) {
 function SidebarBrand() {
   const { collapsed } = useSidebar()
   return (
-    <Link href="/resumen" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity overflow-hidden">
+    <Link
+      href="/resumen"
+      className={`flex items-center hover:opacity-80 transition-opacity overflow-hidden ${collapsed ? "justify-center" : "gap-2.5"}`}
+    >
       <div className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg overflow-hidden"
         style={{ background: "rgba(240,180,41,0.12)", border: "1px solid rgba(240,180,41,0.22)" }}>
         <Image src="/logo-encuentro.png" alt="El Encuentro" width={28} height={28} className="object-contain" />
       </div>
       {!collapsed && (
         <div className="flex flex-col min-w-0 overflow-hidden">
-          <span className="text-sm font-bold text-sidebar-foreground leading-tight whitespace-nowrap">
-            El Encuentro
-          </span>
-          <span className="text-[9px] text-sidebar-foreground/40 font-medium uppercase tracking-wider whitespace-nowrap">
-            Café Tostado
-          </span>
+          <span className="text-sm font-bold text-sidebar-foreground leading-tight whitespace-nowrap">El Encuentro</span>
+          <span className="text-[9px] text-sidebar-foreground/40 font-medium uppercase tracking-wider whitespace-nowrap">Café Tostado</span>
         </div>
       )}
     </Link>
@@ -116,7 +115,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <Sidebar>
-        <SidebarHeader className="p-3 border-b border-sidebar-border/50">
+        <SidebarHeader className="h-14 flex items-center px-3 border-b border-sidebar-border/50 shrink-0">
           <SidebarBrand />
         </SidebarHeader>
 
@@ -126,8 +125,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </Sidebar>
 
       <SidebarInset>
-        {/* Navbar — gris oscuro / negro */}
-        <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-white/[0.06] bg-zinc-950/95 backdrop-blur-md px-4 lg:h-[56px] lg:px-6">
+        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between px-4 lg:px-6"
+          style={{ background: "rgba(20,10,4,0.96)", borderBottom: "1px solid rgba(240,180,41,0.1)", backdropFilter: "blur(12px)" }}>
           <div className="flex items-center gap-3">
             <SidebarTrigger className="text-white/50 hover:text-white hover:bg-white/8" />
           </div>
