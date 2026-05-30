@@ -122,10 +122,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <SidebarProvider>
+      {/* Línea horizontal única a 56px */}
+      <div className="fixed top-[56px] left-0 right-0 z-50 h-px pointer-events-none" style={{ background: "rgba(240,180,41,0.12)" }} />
+
       <Sidebar>
-        <SidebarHeader className="flex items-center justify-center px-2 border-b border-sidebar-border/50 shrink-0"><div style={{ height: "56px", minHeight: "56px" }} className="flex items-center justify-center w-full">
+        <SidebarHeader className="flex items-center justify-center px-2 shrink-0" style={{ height: '56px', minHeight: '56px' }}>
           <SidebarBrand />
-        </div></SidebarHeader>
+        </SidebarHeader>
 
         <SidebarContent>
           <NavLinks />
@@ -133,7 +136,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </Sidebar>
 
       <SidebarInset>
-        <header className="sticky top-0 z-40 flex shrink-0 items-center justify-between px-4 lg:px-6 bg-sidebar border-b border-sidebar-border/50" style={{ height: '56px', minHeight: '56px' }}>
+        <header className="sticky top-0 z-40 flex shrink-0 items-center justify-between px-4 lg:px-6 bg-sidebar" style={{ height: '56px', minHeight: '56px' }}>
           <div className="flex items-center gap-3">
             <SidebarTrigger className="text-white/50 hover:text-white hover:bg-white/8" />
           </div>
