@@ -6,7 +6,7 @@ import Image from "next/image"
 import { motion } from "framer-motion"
 import { ArrowRight, BarChart2, ShoppingBag, Package, TrendingUp } from "lucide-react"
 
-const Grainient = dynamic(() => import("@/components/grainient"), { ssr: false })
+const Beams = dynamic(() => import("@/components/beams"), { ssr: false })
 
 const MODULOS = [
   { icon: ShoppingBag, label: "Ventas" },
@@ -21,29 +21,19 @@ export default function LandingPage() {
       className="min-h-screen w-full flex flex-col items-center justify-center px-6 relative overflow-hidden"
       style={{ backgroundColor: "#0D0806" }}
     >
-      {/* Grainient de fondo */}
+      {/* Beams de fondo */}
       <div className="absolute inset-0 z-0">
-        <Grainient
-          color1="#1A0C04"
-          color2="#3D1F00"
-          color3="#0D0806"
-          timeSpeed={0.2}
-          warpStrength={1.2}
-          warpFrequency={4}
-          warpSpeed={1.5}
-          warpAmplitude={40}
-          blendAngle={30}
-          blendSoftness={0.05}
-          rotationAmount={200}
-          noiseScale={2}
-          grainAmount={0.08}
-          grainScale={2}
-          contrast={1.4}
-          gamma={1}
-          saturation={1.2}
-          zoom={0.95}
+        <Beams
+          beamWidth={2}
+          beamHeight={18}
+          beamNumber={10}
+          lightColor="#C88A1A"
+          speed={1.4}
+          noiseIntensity={1.6}
+          scale={0.18}
+          rotation={0}
         />
-        <div className="absolute inset-0" style={{ background: "rgba(13,8,6,0.35)" }} />
+        <div className="absolute inset-0" style={{ background: "rgba(13,8,6,0.55)" }} />
       </div>
 
       {/* Contenido */}

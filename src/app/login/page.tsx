@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { AlertCircle, ArrowRight } from "lucide-react"
 import { saveAuth } from "@/lib/auth"
 
-const Grainient = dynamic(() => import("@/components/grainient"), { ssr: false })
+const Beams = dynamic(() => import("@/components/beams"), { ssr: false })
 
 const ROLES = [
   { id: "administrador", label: "Administrador" },
@@ -64,28 +64,19 @@ export default function LoginPage() {
       className="min-h-screen w-full flex items-center justify-center px-6 relative overflow-hidden"
       style={{ backgroundColor: "#0D0806" }}
     >
-      {/* Grainient de fondo */}
+      {/* Beams de fondo */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <Grainient
-          color1="#1A0C04"
-          color2="#3D1F00"
-          color3="#0D0806"
-          timeSpeed={0.18}
-          warpStrength={1}
-          warpFrequency={4}
-          warpSpeed={1.2}
-          warpAmplitude={35}
-          blendAngle={20}
-          blendSoftness={0.06}
-          rotationAmount={150}
-          noiseScale={2}
-          grainAmount={0.07}
-          grainScale={2}
-          contrast={1.3}
-          saturation={1.1}
-          zoom={0.95}
+        <Beams
+          beamWidth={1.5}
+          beamHeight={16}
+          beamNumber={8}
+          lightColor="#C88A1A"
+          speed={1.2}
+          noiseIntensity={1.5}
+          scale={0.15}
+          rotation={0}
         />
-        <div className="absolute inset-0" style={{ background: "rgba(13,8,6,0.45)" }} />
+        <div className="absolute inset-0" style={{ background: "rgba(13,8,6,0.6)" }} />
       </div>
 
       <motion.div
