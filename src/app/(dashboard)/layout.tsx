@@ -125,8 +125,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </Sidebar>
 
       <SidebarInset>
-        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between px-4 lg:px-6"
-          style={{ background: "rgba(20,10,4,0.96)", borderBottom: "1px solid rgba(240,180,41,0.1)", backdropFilter: "blur(12px)" }}>
+        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between px-4 lg:px-6 bg-sidebar border-b border-sidebar-border/50">
           <div className="flex items-center gap-3">
             <SidebarTrigger className="text-white/50 hover:text-white hover:bg-white/8" />
           </div>

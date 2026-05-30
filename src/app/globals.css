@@ -46,36 +46,36 @@ body {
   }
 
   .dark {
-    /* Fondo: #0D0806 */
-    --background: 18 36% 4%;
+    /* Content area: marrón cálido medio — contrasta con sidebar */
+    --background: 22 28% 9%;
     --foreground: 38 100% 91%;
 
-    /* Cards levemente más claras */
-    --card: 22 40% 6%;
+    /* Cards un poco más claras que el fondo */
+    --card: 22 28% 11%;
     --card-foreground: 38 90% 88%;
 
-    --popover: 22 40% 5%;
+    --popover: 22 28% 10%;
     --popover-foreground: 38 90% 88%;
 
     /* Primary: #F0B429 ámbar dorado */
     --primary: 42 88% 55%;
     --primary-foreground: 24 80% 10%;
 
-    --secondary: 22 20% 12%;
+    --secondary: 22 20% 15%;
     --secondary-foreground: 38 60% 78%;
 
-    --muted: 22 20% 10%;
-    --muted-foreground: 38 25% 52%;
+    --muted: 22 20% 14%;
+    --muted-foreground: 38 25% 55%;
 
-    --accent: 22 25% 13%;
+    --accent: 22 25% 16%;
     --accent-foreground: 38 80% 84%;
 
     --destructive: 0 62% 40%;
     --destructive-foreground: 0 0% 98%;
 
     /* Bordes cálidos sutiles */
-    --border: 22 20% 12%;
-    --input: 22 20% 10%;
+    --border: 22 20% 16%;
+    --input: 22 20% 14%;
     --ring: 42 88% 55%;
 
     /* Sidebar: más oscuro que el fondo del content */
