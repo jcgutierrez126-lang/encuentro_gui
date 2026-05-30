@@ -123,7 +123,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <Sidebar>
-        <SidebarHeader className="h-14 flex items-center justify-center px-2 border-b border-sidebar-border/50 shrink-0">
+        <SidebarHeader className="flex items-center justify-center px-2 border-b border-sidebar-border/50 shrink-0" style={{ height: '56px', minHeight: '56px' }}>
           <SidebarBrand />
         </SidebarHeader>
 
@@ -133,7 +133,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </Sidebar>
 
       <SidebarInset>
-        <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center justify-between px-4 lg:px-6 bg-sidebar border-b border-sidebar-border/50">
+        <header className="sticky top-0 z-40 flex shrink-0 items-center justify-between px-4 lg:px-6 bg-sidebar border-b border-sidebar-border/50" style={{ height: '56px', minHeight: '56px' }}>
           <div className="flex items-center gap-3">
             <SidebarTrigger className="text-white/50 hover:text-white hover:bg-white/8" />
           </div>
