@@ -75,16 +75,24 @@ function SidebarBrand() {
   return (
     <Link
       href="/resumen"
-      className={`flex items-center hover:opacity-80 transition-opacity overflow-hidden ${collapsed ? "justify-center" : "gap-2.5"}`}
+      className={`w-full flex items-center hover:opacity-80 transition-opacity overflow-hidden ${
+        collapsed ? "justify-center" : "gap-3 px-1"
+      }`}
     >
-      <div className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-lg overflow-hidden"
-        style={{ background: "rgba(240,180,41,0.12)", border: "1px solid rgba(240,180,41,0.22)" }}>
-        <Image src="/logo-encuentro.png" alt="El Encuentro" width={28} height={28} className="object-contain" />
+      <div
+        className="flex-shrink-0 flex items-center justify-center h-9 w-9 rounded-xl overflow-hidden"
+        style={{ background: "rgba(240,180,41,0.12)", border: "1px solid rgba(240,180,41,0.22)" }}
+      >
+        <Image src="/logo-encuentro.png" alt="El Encuentro" width={32} height={32} className="object-contain" />
       </div>
       {!collapsed && (
         <div className="flex flex-col min-w-0 overflow-hidden">
-          <span className="text-sm font-bold text-sidebar-foreground leading-tight whitespace-nowrap">El Encuentro</span>
-          <span className="text-[9px] text-sidebar-foreground/40 font-medium uppercase tracking-wider whitespace-nowrap">Café Tostado</span>
+          <span className="text-sm font-bold text-sidebar-foreground leading-tight whitespace-nowrap">
+            El Encuentro
+          </span>
+          <span className="text-[9px] text-sidebar-foreground/40 font-medium uppercase tracking-wider whitespace-nowrap">
+            Café Tostado
+          </span>
         </div>
       )}
     </Link>
@@ -115,7 +123,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <Sidebar>
-        <SidebarHeader className="h-14 flex items-center px-3 border-b border-sidebar-border/50 shrink-0">
+        <SidebarHeader className="h-14 flex items-center justify-center px-2 border-b border-sidebar-border/50 shrink-0">
           <SidebarBrand />
         </SidebarHeader>
 
