@@ -126,8 +126,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="fixed top-[56px] left-0 right-0 z-50 h-px pointer-events-none" style={{ background: "rgba(240,180,41,0.12)" }} />
 
       <Sidebar>
-        <SidebarHeader className="flex items-center justify-center px-2 shrink-0" style={{ height: '56px', minHeight: '56px' }}>
-          <SidebarBrand />
+        <SidebarHeader className="flex items-center justify-center px-2 shrink-0">
+          <div style={{ height: '56px', minHeight: '56px' }} className="flex items-center justify-center w-full">
+            <SidebarBrand />
+          </div>
         </SidebarHeader>
 
         <SidebarContent>
