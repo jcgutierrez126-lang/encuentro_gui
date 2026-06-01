@@ -2,9 +2,46 @@
 
 import { useEffect, useState } from "react"
 import { Plus, Loader2, X, Pencil, Trash2, Building2, Wallet, CreditCard, Briefcase, TrendingUp, DollarSign } from "lucide-react"
-import { api, type Cuenta, type TipoCuenta } from "@/lib/api"
 
-// ── Tipos ─────────────────────────────────────────────────────────────────────
+// ── Setup ──────────────────────────────────────────────────────────────────────
+const BASE = typeof window !== "undefined" ? "" : (process.env.NEXT_PUBLIC_API_URL ?? "")
+
+async function apiFetch(path: string, opts: RequestInit = {}) {
+  const { getToken } = await import("@/lib/auth")
+  const token = getToken()
+  const res = await fetch(`${BASE}${path}`, {
+    ...opts,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(opts.headers ?? {}),
+    },
+  })
+  if (!res.ok) throw new Error(await res.text())
+  if (res.status === 204) return null
+  return res.json()
+}
+
+function cop(n: string | number | null | undefined) {
+  if (n == null || n === "") return "—"
+  const num = Number(n)
+  if (isNaN(num)) return "—"
+  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(num)
+}
+
+// ── Types ──────────────────────────────────────────────────────────────────────
+type TipoCuenta = "bancaria" | "efectivo" | "prestamo" | "agencia" | "dividendos" | "inversion"
+
+interface Cuenta {
+  id: number
+  nombre: string
+  tipo: TipoCuenta
+  saldo_inicial: string
+  numero_cuenta: string | null
+  banco: string | null
+}
+
+// ── Constantes ─────────────────────────────────────────────────────────────────
 const TIPOS: [TipoCuenta, string][] = [
   ["bancaria",   "Bancaria"],
   ["efectivo",   "Efectivo"],
@@ -32,14 +69,7 @@ const TIPO_ICON: Record<string, React.ReactNode> = {
   inversion:  <TrendingUp className="h-4 w-4" />,
 }
 
-function cop(n: string | number | null | undefined) {
-  if (n == null || n === "") return "—"
-  const num = Number(n)
-  if (isNaN(num)) return "—"
-  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(num)
-}
-
-// ── Form ──────────────────────────────────────────────────────────────────────
+// ── Form ───────────────────────────────────────────────────────────────────────
 interface FormData {
   nombre: string
   tipo: TipoCuenta
@@ -49,24 +79,24 @@ interface FormData {
 }
 
 const EMPTY: FormData = {
-  nombre:       "",
-  tipo:         "bancaria",
-  saldo_inicial:"0",
-  numero_cuenta:"",
-  banco:        "",
+  nombre:        "",
+  tipo:          "bancaria",
+  saldo_inicial: "0",
+  numero_cuenta: "",
+  banco:         "",
 }
 
 function cuentaToForm(c: Cuenta): FormData {
   return {
     nombre:        c.nombre,
     tipo:          c.tipo,
-    saldo_inicial: c.saldo ?? "0",
+    saldo_inicial: c.saldo_inicial ?? "0",
     numero_cuenta: c.numero_cuenta ?? "",
     banco:         c.banco ?? "",
   }
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
+// ── Modal ──────────────────────────────────────────────────────────────────────
 function ModalCuenta({
   cuenta,
   onGuardado,
@@ -79,19 +109,19 @@ function ModalCuenta({
   onEliminar?: () => void
 }) {
   const esEdicion = cuenta !== null
-  const [form, setForm] = useState<FormData>(cuenta ? cuentaToForm(cuenta) : EMPTY)
-  const [guardando, setGuardando] = useState(false)
+  const [form, setForm]     = useState<FormData>(cuenta ? cuentaToForm(cuenta) : EMPTY)
+  const [guardando, setGuardando]   = useState(false)
   const [eliminando, setEliminando] = useState(false)
   const [confirmarEliminar, setConfirmarEliminar] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError]   = useState<string | null>(null)
 
   const set = (k: keyof FormData) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-      setForm(f => ({ ...f, [k]: e.target.value }))
+    (ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+      setForm(f => ({ ...f, [k]: ev.target.value }))
 
   async function guardar(ev: React.FormEvent) {
     ev.preventDefault()
-    if (!form.nombre || !form.tipo) {
+    if (!form.nombre.trim() || !form.tipo) {
       setError("Nombre y tipo son obligatorios.")
       return
     }
@@ -99,16 +129,22 @@ function ModalCuenta({
     setError(null)
     try {
       const payload = {
-        nombre:        form.nombre,
+        nombre:        form.nombre.trim(),
         tipo:          form.tipo,
-        saldo:         form.saldo_inicial || "0",
-        numero_cuenta: form.numero_cuenta || undefined,
-        banco:         form.banco || undefined,
+        saldo_inicial: form.saldo_inicial || "0",
+        numero_cuenta: form.numero_cuenta || null,
+        banco:         form.banco || null,
       }
       if (esEdicion && cuenta) {
-        await api.finanzas.cuentas.update(cuenta.id, payload)
+        await apiFetch(`/api/v1/finanzas/cuentas/${cuenta.id}/`, {
+          method: "PATCH",
+          body: JSON.stringify(payload),
+        })
       } else {
-        await api.finanzas.cuentas.create(payload)
+        await apiFetch("/api/v1/finanzas/cuentas/", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        })
       }
       onGuardado()
     } catch (e: unknown) {
@@ -121,7 +157,7 @@ function ModalCuenta({
     if (!cuenta) return
     setEliminando(true)
     try {
-      await api.finanzas.cuentas.delete(cuenta.id)
+      await apiFetch(`/api/v1/finanzas/cuentas/${cuenta.id}/`, { method: "DELETE" })
       onEliminar?.()
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Error al eliminar")
@@ -132,7 +168,7 @@ function ModalCuenta({
 
   const field = "flex flex-col gap-1"
   const lbl   = "text-xs font-medium text-muted-foreground"
-  const inp   = "text-sm border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-[#F0B429] text-[rgba(255,240,210,0.88)]"
+  const inp   = "bg-background border border-border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary text-[rgba(255,240,210,0.88)]"
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -141,7 +177,7 @@ function ModalCuenta({
           <h2 className="font-semibold text-[rgba(255,240,210,0.88)]">
             {esEdicion ? "Editar cuenta" : "Nueva cuenta"}
           </h2>
-          <button onClick={onCerrar} className="text-muted-foreground hover:text-foreground">
+          <button onClick={onCerrar} className="text-muted-foreground hover:text-foreground transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -189,7 +225,7 @@ function ModalCuenta({
           <div className="flex items-center justify-between gap-2 pt-2">
             {esEdicion && !confirmarEliminar && (
               <button type="button" onClick={() => setConfirmarEliminar(true)}
-                className="text-sm px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 border border-red-500/20 flex items-center gap-1.5">
+                className="text-sm px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 border border-red-500/20 flex items-center gap-1.5 transition-colors">
                 <Trash2 className="h-3.5 w-3.5" />
                 Eliminar
               </button>
@@ -198,12 +234,12 @@ function ModalCuenta({
               <div className="flex items-center gap-2">
                 <span className="text-xs text-red-400">¿Confirmar?</span>
                 <button type="button" onClick={eliminar} disabled={eliminando}
-                  className="text-xs px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 flex items-center gap-1">
+                  className="text-xs px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 flex items-center gap-1 transition-colors">
                   {eliminando && <Loader2 className="h-3 w-3 animate-spin" />}
                   Sí, eliminar
                 </button>
                 <button type="button" onClick={() => setConfirmarEliminar(false)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-muted">
+                  className="text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors">
                   Cancelar
                 </button>
               </div>
@@ -211,7 +247,7 @@ function ModalCuenta({
             {!confirmarEliminar && (
               <div className="flex gap-2 ml-auto">
                 <button type="button" onClick={onCerrar}
-                  className="text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted">
+                  className="text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted transition-colors">
                   Cancelar
                 </button>
                 <button type="submit" disabled={guardando}
@@ -229,27 +265,28 @@ function ModalCuenta({
   )
 }
 
-// ── Página ────────────────────────────────────────────────────────────────────
+// ── Página ─────────────────────────────────────────────────────────────────────
 export default function CuentasPage() {
-  const [cuentas, setCuentas]       = useState<Cuenta[]>([])
-  const [loading, setLoading]       = useState(true)
+  const [cuentas, setCuentas]           = useState<Cuenta[]>([])
+  const [loading, setLoading]           = useState(true)
   const [modalAbierto, setModalAbierto] = useState(false)
   const [cuentaEditar, setCuentaEditar] = useState<Cuenta | null>(null)
 
   const cargar = () => {
     setLoading(true)
-    api.finanzas.cuentas.list()
-      .then(cs => setCuentas(cs))
+    apiFetch("/api/v1/finanzas/cuentas/")
+      .then(data => setCuentas(Array.isArray(data) ? data : (data?.results ?? [])))
+      .catch(console.error)
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { cargar() }, [])
+  useEffect(() => { cargar() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  function abrirNueva() { setCuentaEditar(null); setModalAbierto(true) }
-  function abrirEditar(c: Cuenta) { setCuentaEditar(c); setModalAbierto(true) }
-  function cerrarModal() { setModalAbierto(false); setCuentaEditar(null) }
+  function abrirNueva()          { setCuentaEditar(null); setModalAbierto(true) }
+  function abrirEditar(c: Cuenta){ setCuentaEditar(c);    setModalAbierto(true) }
+  function cerrarModal()         { setModalAbierto(false); setCuentaEditar(null) }
 
-  const totalSaldo = cuentas.reduce((s, c) => s + Number(c.saldo ?? 0), 0)
+  const totalSaldo = cuentas.reduce((s, c) => s + Number(c.saldo_inicial ?? 0), 0)
 
   return (
     <div className="space-y-5" style={{ color: "rgba(255,240,210,0.88)" }}>
@@ -279,11 +316,11 @@ export default function CuentasPage() {
         </button>
       </div>
 
-      {/* KPI total */}
+      {/* KPI */}
       <div className="rounded-xl border border-border bg-card px-5 py-4 flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Saldo total inicial
+            Total saldo inicial
           </p>
           <p className="text-2xl font-bold tabular-nums mt-1" style={{ color: "#F0B429" }}>
             {cop(totalSaldo)}
@@ -332,31 +369,27 @@ export default function CuentasPage() {
               <div>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">Saldo inicial</p>
                 <p className="text-xl font-bold tabular-nums" style={{ color: "#F0B429" }}>
-                  {cop(c.saldo)}
+                  {cop(c.saldo_inicial)}
                 </p>
               </div>
 
               {/* Detalles */}
-              <div className="flex flex-col gap-1 pt-1 border-t border-border">
-                {c.numero_cuenta && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">N° cuenta</span>
-                    <span className="text-xs tabular-nums font-mono text-muted-foreground">{c.numero_cuenta}</span>
-                  </div>
-                )}
-                {c.banco && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-muted-foreground">Banco</span>
-                    <span className="text-xs font-medium">{c.banco}</span>
-                  </div>
-                )}
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-muted-foreground">Estado</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${c.activa ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" : "bg-muted text-muted-foreground"}`}>
-                    {c.activa ? "Activa" : "Inactiva"}
-                  </span>
+              {(c.numero_cuenta || c.banco) && (
+                <div className="flex flex-col gap-1 pt-1 border-t border-border">
+                  {c.numero_cuenta && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-muted-foreground">N° cuenta</span>
+                      <span className="text-xs tabular-nums font-mono text-muted-foreground">{c.numero_cuenta}</span>
+                    </div>
+                  )}
+                  {c.banco && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-muted-foreground">Banco</span>
+                      <span className="text-xs font-medium">{c.banco}</span>
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>

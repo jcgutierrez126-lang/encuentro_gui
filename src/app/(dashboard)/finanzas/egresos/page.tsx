@@ -2,29 +2,69 @@
 
 import { useEffect, useState } from "react"
 import { Plus, Loader2, X, Search, Pencil, Trash2 } from "lucide-react"
-import { api, type Egreso, type Cuenta, type Proveedor } from "@/lib/api"
 import { Paginacion } from "@/components/ui/paginacion"
 
-// ── Categorías encuentro ──────────────────────────────────────────────────────
+// ── Setup ──────────────────────────────────────────────────────────────────────
+const BASE = typeof window !== "undefined" ? "" : (process.env.NEXT_PUBLIC_API_URL ?? "")
+
+async function apiFetch(path: string, opts: RequestInit = {}) {
+  const { getToken } = await import("@/lib/auth")
+  const token = getToken()
+  const res = await fetch(`${BASE}${path}`, {
+    ...opts,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(opts.headers ?? {}),
+    },
+  })
+  if (!res.ok) throw new Error(await res.text())
+  if (res.status === 204) return null
+  return res.json()
+}
+
+function cop(n: string | number | null | undefined) {
+  if (n == null || n === "") return "—"
+  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(Number(n))
+}
+
+// ── Types ──────────────────────────────────────────────────────────────────────
+interface Cuenta { id: number; nombre: string }
+interface Proveedor { id: number; nombre: string }
+interface Egreso {
+  id: number
+  fecha: string
+  nombre: string
+  descripcion: string
+  valor: string
+  categoria: string
+  cuenta: number
+  proveedor: number | null
+  cuenta_nombre: string
+  proveedor_nombre: string | null
+  estado: string
+}
+
+// ── Constantes ─────────────────────────────────────────────────────────────────
 const CATEGORIAS: [string, string][] = [
-  ["tostadora", "Tostadora"],
-  ["empaque", "Empaque"],
-  ["transporte", "Transporte"],
-  ["insumos", "Insumos"],
-  ["marketing", "Marketing"],
-  ["servicios", "Servicios"],
-  ["nomina", "Nómina"],
-  ["impuestos", "Impuestos"],
+  ["tostadora",     "Tostadora"],
+  ["empaque",       "Empaque"],
+  ["transporte",    "Transporte"],
+  ["insumos",       "Insumos"],
+  ["marketing",     "Marketing"],
+  ["servicios",     "Servicios"],
+  ["nomina",        "Nómina"],
+  ["impuestos",     "Impuestos"],
   ["mantenimiento", "Mantenimiento"],
   ["activos_fijos", "Activos Fijos"],
-  ["capacitaciones", "Capacitaciones"],
-  ["varios", "Varios"],
+  ["capacitaciones","Capacitaciones"],
+  ["varios",        "Varios"],
 ]
 
 const ESTADOS: [string, string][] = [
-  ["pagada", "Pagada"],
+  ["pagada",    "Pagada"],
   ["pendiente", "Pendiente"],
-  ["parcial", "Parcial"],
+  ["parcial",   "Parcial"],
 ]
 
 const CAT_BADGE: Record<string, string> = {
@@ -42,21 +82,13 @@ const CAT_BADGE: Record<string, string> = {
   varios:        "bg-gray-500/20 text-gray-300 border border-gray-500/30",
 }
 
-function cop(n: string | number | null | undefined) {
-  if (n == null || n === "") return "—"
-  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(Number(n))
-}
+const MESES: [string, string][] = [
+  ["01","Enero"],["02","Febrero"],["03","Marzo"],["04","Abril"],
+  ["05","Mayo"],["06","Junio"],["07","Julio"],["08","Agosto"],
+  ["09","Septiembre"],["10","Octubre"],["11","Noviembre"],["12","Diciembre"],
+]
 
-function badgeEstado(e: string) {
-  const map: Record<string, string> = {
-    pagada:   "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30",
-    pendiente:"bg-red-500/20 text-red-300 border border-red-500/30",
-    parcial:  "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30",
-  }
-  return map[e] ?? "bg-muted text-muted-foreground"
-}
-
-// ── Form types ────────────────────────────────────────────────────────────────
+// ── Form ───────────────────────────────────────────────────────────────────────
 interface FormData {
   fecha: string
   nombre: string
@@ -69,14 +101,14 @@ interface FormData {
 }
 
 const EMPTY: FormData = {
-  fecha: new Date().toISOString().slice(0, 10),
-  nombre: "",
+  fecha:       new Date().toISOString().slice(0, 10),
+  nombre:      "",
   descripcion: "",
-  valor: "",
-  categoria: "varios",
-  cuenta: "",
-  proveedor: "",
-  estado: "pagada",
+  valor:       "",
+  categoria:   "varios",
+  cuenta:      "",
+  proveedor:   "",
+  estado:      "pagada",
 }
 
 function egresoToForm(e: Egreso): FormData {
@@ -92,7 +124,7 @@ function egresoToForm(e: Egreso): FormData {
   }
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
+// ── Modal ──────────────────────────────────────────────────────────────────────
 function ModalEgreso({
   egreso,
   cuentas,
@@ -116,8 +148,8 @@ function ModalEgreso({
   const [error, setError] = useState<string | null>(null)
 
   const set = (k: keyof FormData) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-      setForm(f => ({ ...f, [k]: e.target.value }))
+    (ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
+      setForm(f => ({ ...f, [k]: ev.target.value }))
 
   async function guardar(ev: React.FormEvent) {
     ev.preventDefault()
@@ -136,12 +168,18 @@ function ModalEgreso({
         cuenta:      Number(form.cuenta),
         categoria:   form.categoria,
         proveedor:   form.proveedor ? Number(form.proveedor) : null,
-        estado:      form.estado as never,
+        estado:      form.estado,
       }
       if (esEdicion && egreso) {
-        await api.finanzas.egresos.update(egreso.id, payload)
+        await apiFetch(`/api/v1/finanzas/egresos/${egreso.id}/`, {
+          method: "PATCH",
+          body: JSON.stringify(payload),
+        })
       } else {
-        await api.finanzas.egresos.create(payload)
+        await apiFetch("/api/v1/finanzas/egresos/", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        })
       }
       onGuardado()
     } catch (e: unknown) {
@@ -154,7 +192,7 @@ function ModalEgreso({
     if (!egreso) return
     setEliminando(true)
     try {
-      await api.finanzas.egresos.delete(egreso.id)
+      await apiFetch(`/api/v1/finanzas/egresos/${egreso.id}/`, { method: "DELETE" })
       onEliminar?.()
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Error al eliminar")
@@ -165,7 +203,7 @@ function ModalEgreso({
 
   const field = "flex flex-col gap-1"
   const lbl   = "text-xs font-medium text-muted-foreground"
-  const inp   = "text-sm border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-[#F0B429] text-[rgba(255,240,210,0.88)]"
+  const inp   = "bg-background border border-border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary text-[rgba(255,240,210,0.88)]"
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -174,7 +212,7 @@ function ModalEgreso({
           <h2 className="font-semibold text-[rgba(255,240,210,0.88)]">
             {esEdicion ? "Editar egreso" : "Nuevo egreso"}
           </h2>
-          <button onClick={onCerrar} className="text-muted-foreground hover:text-foreground">
+          <button onClick={onCerrar} className="text-muted-foreground hover:text-foreground transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
@@ -244,7 +282,7 @@ function ModalEgreso({
           <div className="flex items-center justify-between gap-2 pt-2">
             {esEdicion && !confirmarEliminar && (
               <button type="button" onClick={() => setConfirmarEliminar(true)}
-                className="text-sm px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 border border-red-500/20 flex items-center gap-1.5">
+                className="text-sm px-3 py-2 rounded-lg text-red-400 hover:bg-red-500/10 border border-red-500/20 flex items-center gap-1.5 transition-colors">
                 <Trash2 className="h-3.5 w-3.5" />
                 Eliminar
               </button>
@@ -253,12 +291,12 @@ function ModalEgreso({
               <div className="flex items-center gap-2">
                 <span className="text-xs text-red-400">¿Confirmar?</span>
                 <button type="button" onClick={eliminar} disabled={eliminando}
-                  className="text-xs px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 flex items-center gap-1">
+                  className="text-xs px-3 py-1.5 rounded-lg bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 flex items-center gap-1 transition-colors">
                   {eliminando && <Loader2 className="h-3 w-3 animate-spin" />}
                   Sí, eliminar
                 </button>
                 <button type="button" onClick={() => setConfirmarEliminar(false)}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-muted">
+                  className="text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors">
                   Cancelar
                 </button>
               </div>
@@ -266,7 +304,7 @@ function ModalEgreso({
             {!confirmarEliminar && (
               <div className="flex gap-2 ml-auto">
                 <button type="button" onClick={onCerrar}
-                  className="text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted">
+                  className="text-sm px-4 py-2 rounded-lg border border-border hover:bg-muted transition-colors">
                   Cancelar
                 </button>
                 <button type="submit" disabled={guardando}
@@ -284,54 +322,53 @@ function ModalEgreso({
   )
 }
 
-// ── Página ────────────────────────────────────────────────────────────────────
+// ── Página ─────────────────────────────────────────────────────────────────────
 export default function EgresosPage() {
-  const [egresos, setEgresos]       = useState<Egreso[]>([])
-  const [cuentas, setCuentas]       = useState<Cuenta[]>([])
-  const [proveedores, setProveedores] = useState<Proveedor[]>([])
-  const [loading, setLoading]       = useState(true)
+  const [egresos, setEgresos]           = useState<Egreso[]>([])
+  const [cuentas, setCuentas]           = useState<Cuenta[]>([])
+  const [proveedores, setProveedores]   = useState<Proveedor[]>([])
+  const [loading, setLoading]           = useState(true)
   const [modalAbierto, setModalAbierto] = useState(false)
   const [egresoEditar, setEgresoEditar] = useState<Egreso | null>(null)
-  const [pagina, setPagina]         = useState(1)
-  const [total, setTotal]           = useState(0)
-  const [totalMes, setTotalMes]     = useState(0)
-  const [totalAcum, setTotalAcum]   = useState(0)
+  const [pagina, setPagina]             = useState(1)
+  const [total, setTotal]               = useState(0)
+  const [totalMes, setTotalMes]         = useState(0)
+  const [totalAcum, setTotalAcum]       = useState(0)
   const PAGE_SIZE = 50
 
-  // Filtros
-  const [mes, setMes]           = useState(() => String(new Date().getMonth() + 1).padStart(2, "0"))
-  const [anio, setAnio]         = useState(() => String(new Date().getFullYear()))
+  const now = new Date()
+  const [mes, setMes]         = useState(() => String(now.getMonth() + 1).padStart(2, "0"))
+  const [anio, setAnio]       = useState(() => String(now.getFullYear()))
   const [categoria, setCategoria] = useState("")
-  const [query, setQuery]       = useState("")
+  const [query, setQuery]     = useState("")
+
+  const ANIOS = Array.from({ length: 5 }, (_, i) => String(now.getFullYear() - i))
 
   const cargar = (pg = pagina) => {
     setLoading(true)
-    const params: Record<string, string> = { page: String(pg) }
+    const params: Record<string, string> = { page: String(pg), page_size: String(PAGE_SIZE) }
     if (mes && anio) {
-      const desde = `${anio}-${mes}-01`
       const lastDay = new Date(Number(anio), Number(mes), 0).getDate()
-      const hasta = `${anio}-${mes}-${String(lastDay).padStart(2, "0")}`
-      params.fecha_desde = desde
-      params.fecha_hasta = hasta
+      params.fecha_desde = `${anio}-${mes}-01`
+      params.fecha_hasta = `${anio}-${mes}-${String(lastDay).padStart(2, "0")}`
     }
     if (categoria) params.categoria = categoria
 
-    const paramsAcum: Record<string, string> = { page: "1", page_size: "1" }
-    if (anio) paramsAcum.fecha_desde = `${anio}-01-01`
+    const acumParams = new URLSearchParams({ page: "1", page_size: "1", fecha_desde: `${anio}-01-01` })
 
     Promise.all([
-      api.finanzas.egresos.list(params),
-      api.finanzas.egresos.list(paramsAcum),
-      api.finanzas.cuentas.list(),
-      api.finanzas.proveedores.list({ page: "1", page_size: "200" }),
+      apiFetch(`/api/v1/finanzas/egresos/?${new URLSearchParams(params)}`),
+      apiFetch(`/api/v1/finanzas/egresos/?${acumParams}`),
+      apiFetch("/api/v1/finanzas/cuentas/"),
+      apiFetch("/api/v1/finanzas/proveedores/?page=1&page_size=200"),
     ]).then(([e, eAcum, c, p]) => {
-      setEgresos(e.results)
-      setTotal(e.count)
+      setEgresos(e.results ?? [])
+      setTotal(e.count ?? 0)
       setTotalMes(e.total_valor ?? 0)
       setTotalAcum(eAcum.total_valor ?? 0)
-      setCuentas(c)
-      setProveedores(p.results)
-    }).finally(() => setLoading(false))
+      setCuentas(Array.isArray(c) ? c : (c.results ?? []))
+      setProveedores(p.results ?? [])
+    }).catch(console.error).finally(() => setLoading(false))
   }
 
   useEffect(() => { cargar(1) }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -341,16 +378,9 @@ export default function EgresosPage() {
     return !q || e.nombre.toLowerCase().includes(q) || (e.proveedor_nombre ?? "").toLowerCase().includes(q)
   })
 
-  const MESES = [
-    ["01","Enero"],["02","Febrero"],["03","Marzo"],["04","Abril"],
-    ["05","Mayo"],["06","Junio"],["07","Julio"],["08","Agosto"],
-    ["09","Septiembre"],["10","Octubre"],["11","Noviembre"],["12","Diciembre"],
-  ]
-  const ANIOS = Array.from({ length: 5 }, (_, i) => String(new Date().getFullYear() - i))
-
-  function abrirNuevo() { setEgresoEditar(null); setModalAbierto(true) }
+  function abrirNuevo()       { setEgresoEditar(null);  setModalAbierto(true) }
   function abrirEditar(e: Egreso) { setEgresoEditar(e); setModalAbierto(true) }
-  function cerrarModal() { setModalAbierto(false); setEgresoEditar(null) }
+  function cerrarModal()      { setModalAbierto(false); setEgresoEditar(null)  }
 
   return (
     <div className="space-y-5" style={{ color: "rgba(255,240,210,0.88)" }}>
@@ -417,21 +447,21 @@ export default function EgresosPage() {
         <div className="flex flex-col gap-1">
           <label className="text-[11px] text-muted-foreground">Mes</label>
           <select value={mes} onChange={e => setMes(e.target.value)}
-            className="text-sm border border-border rounded-lg px-3 py-2 bg-background">
+            className="text-sm border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-[#F0B429]">
             {MESES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-[11px] text-muted-foreground">Año</label>
           <select value={anio} onChange={e => setAnio(e.target.value)}
-            className="text-sm border border-border rounded-lg px-3 py-2 bg-background">
+            className="text-sm border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-[#F0B429]">
             {ANIOS.map(a => <option key={a} value={a}>{a}</option>)}
           </select>
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-[11px] text-muted-foreground">Categoría</label>
           <select value={categoria} onChange={e => setCategoria(e.target.value)}
-            className="text-sm border border-border rounded-lg px-3 py-2 bg-background">
+            className="text-sm border border-border rounded-lg px-3 py-2 bg-background focus:outline-none focus:ring-1 focus:ring-[#F0B429]">
             <option value="">Todas</option>
             {CATEGORIAS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
@@ -439,7 +469,7 @@ export default function EgresosPage() {
         <button
           onClick={() => { setPagina(1); cargar(1) }}
           style={{ background: "linear-gradient(135deg, #F0B429 0%, #C88A1A 100%)", color: "#3D1F00" }}
-          className="text-sm px-4 py-2 rounded-lg font-medium">
+          className="text-sm px-4 py-2 rounded-lg font-medium self-end">
           Filtrar
         </button>
       </div>
