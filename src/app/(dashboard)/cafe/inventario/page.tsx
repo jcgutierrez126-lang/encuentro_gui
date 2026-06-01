@@ -76,12 +76,18 @@ interface FormAjuste {
   observaciones: string
 }
 
+const HOY = new Date().toISOString().slice(0, 10)
+
 const EMPTY_FORM: FormAjuste = {
   tipo: "entrada",
   calidad: "",
   tipo_cafe: "grano",
   kilos: "",
   observaciones: "",
+}
+
+interface FormAjusteConFecha extends FormAjuste {
+  fecha: string
 }
 
 function origenLabel(mov: Movimiento) {
@@ -100,7 +106,7 @@ function ModalAjuste({
   onGuardado: () => void
   onCerrar: () => void
 }) {
-  const [form, setForm] = useState<FormAjuste>(EMPTY_FORM)
+  const [form, setForm] = useState<FormAjusteConFecha>({ ...EMPTY_FORM, fecha: HOY })
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -119,10 +125,11 @@ function ModalAjuste({
     setError(null)
     try {
       await apiPost("/api/v1/cafe/inventario/", {
+        fecha: form.fecha,
         tipo: form.tipo,
         calidad: Number(form.calidad),
         tipo_cafe: form.tipo_cafe,
-        kilos: form.kilos,
+        kilos: Number(form.kilos),
         observaciones: form.observaciones || null,
       })
       onGuardado()
@@ -151,6 +158,11 @@ function ModalAjuste({
           {error && (
             <p className="text-xs text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</p>
           )}
+
+          <div className={field}>
+            <label className={lbl}>Fecha *</label>
+            <input type="date" value={(form as FormAjusteConFecha).fecha} onChange={e => setForm(f => ({ ...f, fecha: e.target.value }))} className={inp} required />
+          </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className={field}>
@@ -312,22 +324,24 @@ export default function InventarioPage() {
   const [error, setError] = useState<string | null>(null)
   const [modal, setModal] = useState(false)
 
-  const cargar = () => {
+  function cargar() {
     setLoading(true)
+    setError(null)
     Promise.all([
       apiFetch("/api/v1/cafe/inventario/stock/"),
-      apiFetch("/api/v1/cafe/inventario/?page_size=20"),
+      apiFetch("/api/v1/cafe/inventario/?page_size=50"),
       apiFetch("/api/v1/cafe/calidades/"),
     ])
       .then(([s, m, c]) => {
-        setStock(s)
-        setMovimientos(m.results ?? m)
-        setCalidades(c)
+        setStock(Array.isArray(s) ? s : (s?.results ?? []))
+        setMovimientos(Array.isArray(m) ? m : (m?.results ?? []))
+        setCalidades(Array.isArray(c) ? c : (c?.results ?? []))
       })
-      .catch(e => setError(e.message))
+      .catch(e => setError(e instanceof Error ? e.message : String(e)))
       .finally(() => setLoading(false))
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { cargar() }, [])
 
   if (loading) return (

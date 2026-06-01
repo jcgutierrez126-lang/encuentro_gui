@@ -2,324 +2,346 @@
 
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { MapPin, Instagram, MessageCircle, Coffee, Leaf, Award } from "lucide-react"
+import { ArrowRight, MapPin, Coffee, Leaf, Star, MessageCircle, Instagram, ChevronDown } from "lucide-react"
 
 const PRODUCTOS = [
   {
-    nombre: "250 g · En Grano",
-    desc: "Café tostado entero. Ideal para moler en casa y disfrutar el aroma fresco.",
+    nombre: "Tostado Oscuro",
+    presentaciones: ["250 g", "450 g", "2.5 kg"],
     tipo: "grano",
-    badge: "Más popular",
+    descripcion: "Cuerpo intenso, notas de chocolate amargo y caramelo. Perfecto para espresso.",
+    proceso: "Natural",
+    origen: "Colombia",
+    img: null,
   },
   {
-    nombre: "250 g · Molido",
-    desc: "Molido mediano, perfecto para cafetera de filtro, prensa francesa o moka.",
+    nombre: "Tostado Medio",
+    presentaciones: ["250 g", "450 g"],
     tipo: "molido",
-    badge: null,
-  },
-  {
-    nombre: "450 g · En Grano",
-    desc: "Presentación familiar. Grano entero para baristas y amantes del café en casa.",
-    tipo: "grano",
-    badge: null,
-  },
-  {
-    nombre: "450 g · Molido",
-    desc: "Molido listo para usar. Sin aditivos, sin mezclas. Solo café de origen.",
-    tipo: "molido",
-    badge: null,
-  },
-  {
-    nombre: "2.5 kg · En Grano",
-    desc: "Para cafeterías, restaurantes y hogares con alto consumo. A granel premium.",
-    tipo: "grano",
-    badge: "Restaurantes",
-  },
-  {
-    nombre: "2.5 kg · Molido",
-    desc: "Volumen profesional, calidad artesanal. Entrega directa a tu negocio.",
-    tipo: "molido",
-    badge: null,
-  },
-]
-
-const CALIDADES = [
-  {
-    nombre: "Pergamino Seco",
-    desc: "Proceso húmedo tradicional. Notas de caramelo, fruta madura y cuerpo balanceado.",
-    icon: Coffee,
+    descripcion: "Balance perfecto entre acidez y dulzura. Notas de fruta madura y miel.",
+    proceso: "Washed",
+    origen: "Colombia",
+    img: null,
   },
   {
     nombre: "Especialidad",
-    desc: "Lotes seleccionados con puntaje SCA ≥ 80. Perfil complejo y taza limpia.",
-    icon: Award,
+    presentaciones: ["250 g", "450 g", "2.5 kg"],
+    tipo: "grano",
+    descripcion: "Lotes seleccionados con puntaje SCA ≥ 82. Perfil complejo, taza limpia y memorable.",
+    proceso: "Honey",
+    origen: "Colombia",
+    img: null,
+  },
+  {
+    nombre: "Molido Filtro",
+    presentaciones: ["250 g", "450 g"],
+    tipo: "molido",
+    descripcion: "Molido especial para cafetera de filtro, chemex y V60. Extracción perfecta.",
+    proceso: "Washed",
+    origen: "Colombia",
+    img: null,
   },
 ]
 
-function fade(delay: number) {
+const VALORES = [
+  { icon: MapPin, titulo: "Origen directo", desc: "Trabajamos con productores colombianos de confianza, pagando precios justos." },
+  { icon: Coffee, titulo: "Tostado artesanal", desc: "Lotes pequeños tostados con precisión para preservar cada nota del café." },
+  { icon: Leaf, titulo: "Sostenibilidad", desc: "Prácticas responsables desde el campo hasta tu taza." },
+]
+
+const WA = "https://wa.me/573000000000"
+const IG = "https://instagram.com/cafeelencuentro"
+
+function fade(delay = 0) {
   return {
-    initial: { opacity: 0, y: 20 },
+    initial: { opacity: 0, y: 24 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true },
-    transition: { duration: 0.55, delay },
+    transition: { duration: 0.6, delay },
   }
 }
 
 export default function CatalogoPage() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#0D0806", color: "rgba(255,240,210,0.88)" }}>
+    <div className="min-h-screen" style={{ backgroundColor: "#0A0603", color: "rgba(255,240,210,0.88)" }}>
 
-      {/* ── Nav ── */}
-      <nav className="flex items-center justify-between px-6 py-5 md:px-14 border-b" style={{ borderColor: "rgba(255,240,210,0.06)" }}>
+      {/* ── Navbar ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-16 py-5"
+        style={{ background: "rgba(10,6,3,0.85)", backdropFilter: "blur(16px)", borderBottom: "1px solid rgba(255,240,210,0.06)" }}>
         <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl overflow-hidden flex items-center justify-center"
+          <div className="h-9 w-9 rounded-xl overflow-hidden"
             style={{ background: "rgba(240,180,41,0.1)", border: "1px solid rgba(240,180,41,0.2)" }}>
-            <Image src="/logo-encuentro.png" alt="El Encuentro" width={32} height={32} className="object-contain" />
+            <Image src="/logo-encuentro.png" alt="El Encuentro" width={36} height={36} className="object-contain" />
           </div>
           <div>
-            <p className="font-black text-sm leading-tight" style={{ color: "rgba(255,240,210,0.92)" }}>El Encuentro</p>
-            <p className="text-[9px] uppercase tracking-[0.18em]" style={{ color: "rgba(240,180,41,0.45)" }}>café tostado · colombia</p>
+            <p className="font-black text-sm leading-none" style={{ color: "rgba(255,240,210,0.92)" }}>El Encuentro</p>
+            <p className="text-[9px] uppercase tracking-[0.18em]" style={{ color: "rgba(240,180,41,0.45)" }}>café tostado</p>
           </div>
         </div>
-        <a
-          href="https://wa.me/573000000000"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-xl transition-all"
+
+        <div className="hidden md:flex items-center gap-8">
+          {[
+            { label: "Café", href: "#cafe" },
+            { label: "Nosotros", href: "#nosotros" },
+            { label: "Contacto", href: "#contacto" },
+          ].map(l => (
+            <a key={l.href} href={l.href}
+              className="text-sm transition-colors"
+              style={{ color: "rgba(255,240,210,0.5)" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "rgba(240,180,41,0.8)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,240,210,0.5)")}>
+              {l.label}
+            </a>
+          ))}
+        </div>
+
+        <a href="https://contabilidad.cafeelencuentro.com" target="_blank" rel="noopener noreferrer"
+          className="text-xs font-semibold px-4 py-2 rounded-xl transition-all"
           style={{
-            background: "rgba(37,211,102,0.12)",
-            border: "1px solid rgba(37,211,102,0.22)",
-            color: "rgba(37,211,102,0.85)",
-          }}
-        >
-          <MessageCircle className="h-3.5 w-3.5" />
-          Pedir por WhatsApp
+            background: "rgba(240,180,41,0.1)",
+            border: "1px solid rgba(240,180,41,0.25)",
+            color: "rgba(240,180,41,0.8)",
+          }}>
+          Sistema interno →
         </a>
       </nav>
 
       {/* ── Hero ── */}
-      <section className="px-6 md:px-14 pt-20 pb-16 flex flex-col md:flex-row items-center gap-10 md:gap-16 max-w-5xl mx-auto">
-        <motion.div {...fade(0)} className="flex-1">
-          <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 mb-6 text-[10px] uppercase tracking-[0.22em] font-semibold"
-            style={{ background: "rgba(240,180,41,0.1)", border: "1px solid rgba(240,180,41,0.2)", color: "rgba(240,180,41,0.65)" }}>
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-20">
+        {/* Café image background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 z-10"
+            style={{ background: "linear-gradient(to bottom, rgba(10,6,3,0.6) 0%, rgba(10,6,3,0.4) 50%, rgba(10,6,3,0.85) 100%)" }} />
+          {/* Placeholder: imagen de café */}
+          <div className="w-full h-full" style={{ background: "radial-gradient(ellipse at center, rgba(240,180,41,0.08) 0%, rgba(10,6,3,0) 70%)" }} />
+        </div>
+
+        <motion.div {...fade(0)} className="relative z-20 max-w-3xl">
+          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-8 text-[10px] uppercase tracking-[0.25em] font-semibold"
+            style={{ background: "rgba(240,180,41,0.1)", border: "1px solid rgba(240,180,41,0.2)", color: "rgba(240,180,41,0.7)" }}>
             <MapPin className="h-2.5 w-2.5" />
-            Origen Colombia
+            Café de origen colombiano
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-[56px] font-black leading-[1.05] mb-5"
+
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.95] tracking-tight mb-8"
             style={{ color: "rgba(255,240,210,0.95)" }}>
-            Café de altura,<br />
-            <span style={{ color: "#F0B429" }}>tostado</span>
-            {" "}
-            <span style={{ color: "rgba(255,240,210,0.28)" }}>con amor.</span>
+            Del grano<br />
+            <span style={{ color: "#F0B429" }}>a tu</span>{" "}
+            <span style={{ color: "rgba(255,240,210,0.3)" }}>taza.</span>
           </h1>
-          <p className="text-sm leading-relaxed max-w-md mb-8" style={{ color: "rgba(255,240,210,0.4)" }}>
-            Del campo colombiano directo a tu taza. Seleccionamos los mejores granos, los tostamos en pequeños lotes
-            y los entregamos frescos en las presentaciones que necesitas.
+
+          <p className="text-base md:text-lg leading-relaxed mb-10 max-w-xl mx-auto"
+            style={{ color: "rgba(255,240,210,0.45)" }}>
+            Café tostado artesanalmente en pequeños lotes. Seleccionamos los mejores granos
+            de origen colombiano para llevarte una experiencia única en cada taza.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <a href="#productos"
-              className="flex items-center gap-2 text-sm font-bold px-5 py-2.5 rounded-xl"
+
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <a href="#cafe"
+              className="flex items-center gap-2 text-sm font-bold px-7 py-3.5 rounded-xl"
               style={{
                 background: "linear-gradient(135deg, #F0B429 0%, #C88A1A 100%)",
                 color: "#3D1F00",
-                boxShadow: "0 4px 20px rgba(240,180,41,0.25)",
+                boxShadow: "0 8px 32px rgba(240,180,41,0.3)",
               }}>
               Ver catálogo
+              <ArrowRight className="h-4 w-4" />
             </a>
-            <a href="https://wa.me/573000000000" target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 text-sm font-semibold px-5 py-2.5 rounded-xl"
+            <a href={WA} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm font-semibold px-7 py-3.5 rounded-xl"
               style={{
-                background: "rgba(255,240,210,0.05)",
-                border: "1px solid rgba(255,240,210,0.1)",
+                background: "rgba(255,240,210,0.06)",
+                border: "1px solid rgba(255,240,210,0.12)",
                 color: "rgba(255,240,210,0.75)",
               }}>
               <MessageCircle className="h-4 w-4" />
-              Contactar
+              Pedir ahora
             </a>
           </div>
         </motion.div>
 
-        {/* Logo grande */}
-        <motion.div {...fade(0.15)} className="flex-shrink-0">
-          <div className="h-52 w-52 md:h-64 md:w-64 rounded-3xl overflow-hidden flex items-center justify-center"
-            style={{
-              background: "rgba(240,180,41,0.06)",
-              border: "1px solid rgba(240,180,41,0.14)",
-              boxShadow: "0 16px 60px rgba(240,180,41,0.1)",
-            }}>
-            <Image src="/logo-encuentro.png" alt="El Encuentro" width={200} height={200}
-              className="object-contain p-6"
-              style={{ filter: "drop-shadow(0 4px 20px rgba(240,180,41,0.4))" }} />
-          </div>
+        {/* Scroll hint */}
+        <motion.div
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-1.5"
+          animate={{ y: [0, 6, 0] }}
+          transition={{ repeat: Infinity, duration: 2 }}>
+          <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: "rgba(255,240,210,0.2)" }}>Explorar</p>
+          <ChevronDown className="h-4 w-4" style={{ color: "rgba(255,240,210,0.2)" }} />
         </motion.div>
       </section>
 
-      {/* ── Divider ── */}
-      <div className="mx-6 md:mx-14 h-px mb-16 max-w-5xl mx-auto"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(240,180,41,0.15), transparent)" }} />
-
-      {/* ── Calidades ── */}
-      <section className="px-6 md:px-14 mb-16 max-w-5xl mx-auto">
-        <motion.div {...fade(0)}>
-          <p className="text-[10px] uppercase tracking-[0.22em] font-semibold mb-4"
-            style={{ color: "rgba(240,180,41,0.5)" }}>
-            Nuestros cafés
-          </p>
-        </motion.div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {CALIDADES.map(({ nombre, desc, icon: Icon }, i) => (
-            <motion.div key={nombre} {...fade(i * 0.1)}
-              className="rounded-2xl p-5 flex gap-4"
-              style={{ background: "rgba(240,180,41,0.05)", border: "1px solid rgba(240,180,41,0.12)" }}>
-              <div className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0"
+      {/* ── Valores ── */}
+      <section className="px-6 md:px-16 py-20 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {VALORES.map(({ icon: Icon, titulo, desc }, i) => (
+            <motion.div key={titulo} {...fade(i * 0.1)}
+              className="rounded-2xl p-6 flex flex-col gap-3"
+              style={{ background: "rgba(255,240,210,0.03)", border: "1px solid rgba(255,240,210,0.06)" }}>
+              <div className="h-10 w-10 rounded-xl flex items-center justify-center"
                 style={{ background: "rgba(240,180,41,0.1)", border: "1px solid rgba(240,180,41,0.18)" }}>
                 <Icon className="h-5 w-5" style={{ color: "#F0B429" }} />
               </div>
-              <div>
-                <p className="font-bold text-sm mb-1" style={{ color: "rgba(255,240,210,0.9)" }}>{nombre}</p>
-                <p className="text-xs leading-relaxed" style={{ color: "rgba(255,240,210,0.38)" }}>{desc}</p>
-              </div>
+              <p className="font-bold text-sm" style={{ color: "rgba(255,240,210,0.9)" }}>{titulo}</p>
+              <p className="text-xs leading-relaxed" style={{ color: "rgba(255,240,210,0.38)" }}>{desc}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ── Productos ── */}
-      <section id="productos" className="px-6 md:px-14 mb-20 max-w-5xl mx-auto">
-        <motion.div {...fade(0)} className="mb-6">
-          <p className="text-[10px] uppercase tracking-[0.22em] font-semibold mb-1"
-            style={{ color: "rgba(240,180,41,0.5)" }}>
-            Presentaciones
-          </p>
-          <h2 className="text-2xl font-black" style={{ color: "rgba(255,240,210,0.92)" }}>
-            Encuentra la tuya
+      {/* Divider */}
+      <div className="h-px max-w-5xl mx-auto px-6 md:px-16"
+        style={{ background: "linear-gradient(90deg, transparent, rgba(240,180,41,0.15), transparent)" }} />
+
+      {/* ── Catálogo de productos ── */}
+      <section id="cafe" className="px-6 md:px-16 py-20 max-w-5xl mx-auto">
+        <motion.div {...fade(0)} className="mb-10">
+          <p className="text-[10px] uppercase tracking-[0.25em] font-semibold mb-2"
+            style={{ color: "rgba(240,180,41,0.55)" }}>Nuestros cafés</p>
+          <h2 className="text-3xl md:text-4xl font-black" style={{ color: "rgba(255,240,210,0.92)" }}>
+            Encuentra tu favorito
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {PRODUCTOS.map((p, i) => (
-            <motion.div key={p.nombre} {...fade(i * 0.07)}
-              className="rounded-2xl p-5 flex flex-col gap-3 relative"
+            <motion.div key={p.nombre} {...fade(i * 0.08)}
+              className="group rounded-2xl overflow-hidden flex flex-col"
               style={{
                 background: "rgba(255,240,210,0.03)",
-                border: `1px solid ${p.tipo === 'grano' ? 'rgba(240,180,41,0.12)' : 'rgba(255,240,210,0.07)'}`,
+                border: "1px solid rgba(255,240,210,0.07)",
               }}>
-              {p.badge && (
-                <span className="absolute top-3 right-3 text-[9px] uppercase tracking-wider px-2 py-0.5 rounded-full font-semibold"
-                  style={{ background: "rgba(240,180,41,0.15)", color: "rgba(240,180,41,0.7)", border: "1px solid rgba(240,180,41,0.2)" }}>
-                  {p.badge}
-                </span>
-              )}
-              <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{
-                    background: p.tipo === 'grano' ? "rgba(240,180,41,0.1)" : "rgba(255,240,210,0.05)",
-                    border: `1px solid ${p.tipo === 'grano' ? 'rgba(240,180,41,0.18)' : 'rgba(255,240,210,0.08)'}`,
-                  }}>
-                  {p.tipo === 'grano'
-                    ? <Leaf className="h-3.5 w-3.5" style={{ color: "rgba(240,180,41,0.6)" }} />
-                    : <Coffee className="h-3.5 w-3.5" style={{ color: "rgba(255,240,210,0.35)" }} />
-                  }
+              {/* Imagen del producto */}
+              <div className="h-48 relative overflow-hidden"
+                style={{ background: "linear-gradient(135deg, rgba(240,180,41,0.08) 0%, rgba(10,6,3,0) 100%)" }}>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="h-24 w-24 rounded-2xl overflow-hidden opacity-30"
+                    style={{ background: "rgba(240,180,41,0.1)" }}>
+                    <Image src="/logo-encuentro.png" alt={p.nombre} width={96} height={96} className="object-contain p-2" />
+                  </div>
                 </div>
-                <span className="text-[10px] uppercase tracking-wider font-semibold"
-                  style={{ color: p.tipo === 'grano' ? "rgba(240,180,41,0.55)" : "rgba(255,240,210,0.3)" }}>
-                  {p.tipo === 'grano' ? 'En grano' : 'Molido'}
-                </span>
+                {/* Badges */}
+                <div className="absolute top-3 left-3 flex gap-2">
+                  <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded-full"
+                    style={{ background: "rgba(240,180,41,0.15)", color: "rgba(240,180,41,0.8)", border: "1px solid rgba(240,180,41,0.2)" }}>
+                    {p.proceso}
+                  </span>
+                  <span className="text-[9px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full"
+                    style={{ background: "rgba(255,240,210,0.08)", color: "rgba(255,240,210,0.5)", border: "1px solid rgba(255,240,210,0.1)" }}>
+                    {p.tipo === "grano" ? "En grano" : "Molido"}
+                  </span>
+                </div>
               </div>
-              <div>
-                <p className="font-bold text-sm mb-1.5" style={{ color: "rgba(255,240,210,0.88)" }}>{p.nombre}</p>
-                <p className="text-xs leading-relaxed" style={{ color: "rgba(255,240,210,0.32)" }}>{p.desc}</p>
+
+              {/* Info */}
+              <div className="p-5 flex flex-col gap-3 flex-1">
+                <div>
+                  <h3 className="font-black text-base mb-1" style={{ color: "rgba(255,240,210,0.92)" }}>{p.nombre}</h3>
+                  <p className="text-xs leading-relaxed" style={{ color: "rgba(255,240,210,0.38)" }}>{p.descripcion}</p>
+                </div>
+
+                {/* Presentaciones */}
+                <div className="flex flex-wrap gap-1.5 mt-auto">
+                  {p.presentaciones.map(pr => (
+                    <span key={pr} className="text-[10px] font-semibold px-2.5 py-1 rounded-lg"
+                      style={{ background: "rgba(240,180,41,0.08)", color: "rgba(240,180,41,0.6)", border: "1px solid rgba(240,180,41,0.12)" }}>
+                      {pr}
+                    </span>
+                  ))}
+                </div>
+
+                <a href={WA} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl mt-1 transition-all"
+                  style={{
+                    background: "rgba(240,180,41,0.08)",
+                    border: "1px solid rgba(240,180,41,0.15)",
+                    color: "rgba(240,180,41,0.75)",
+                  }}>
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  Pedir este café
+                </a>
               </div>
-              <a href="https://wa.me/573000000000" target="_blank" rel="noopener noreferrer"
-                className="mt-auto text-xs font-semibold py-2 rounded-lg text-center transition-all"
-                style={{
-                  background: "rgba(240,180,41,0.08)",
-                  border: "1px solid rgba(240,180,41,0.15)",
-                  color: "rgba(240,180,41,0.7)",
-                }}>
-                Pedir este
-              </a>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* ── Historia ── */}
-      <section className="px-6 md:px-14 mb-20 max-w-5xl mx-auto">
-        <div className="rounded-3xl p-8 md:p-12 text-center"
-          style={{ background: "rgba(240,180,41,0.05)", border: "1px solid rgba(240,180,41,0.1)" }}>
+      {/* ── Nosotros ── */}
+      <section id="nosotros" className="px-6 md:px-16 py-20 max-w-5xl mx-auto">
+        <div className="rounded-3xl p-8 md:p-14 text-center"
+          style={{ background: "rgba(240,180,41,0.04)", border: "1px solid rgba(240,180,41,0.1)" }}>
           <motion.div {...fade(0)}>
-            <p className="text-[10px] uppercase tracking-[0.25em] font-semibold mb-4"
-              style={{ color: "rgba(240,180,41,0.5)" }}>
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-6 text-[10px] uppercase tracking-[0.22em] font-semibold"
+              style={{ background: "rgba(240,180,41,0.1)", border: "1px solid rgba(240,180,41,0.2)", color: "rgba(240,180,41,0.6)" }}>
+              <Star className="h-2.5 w-2.5" />
               Nuestra historia
-            </p>
-            <h2 className="text-2xl md:text-3xl font-black mb-5 max-w-xl mx-auto"
-              style={{ color: "rgba(255,240,210,0.92)" }}>
-              Del campo colombiano<br />
-              <span style={{ color: "#F0B429" }}>directo a tu mesa.</span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-black mb-5 max-w-xl mx-auto" style={{ color: "rgba(255,240,210,0.92)" }}>
+              Cada taza es un{" "}
+              <span style={{ color: "#F0B429" }}>encuentro</span>{" "}
+              con Colombia.
             </h2>
-            <p className="text-sm leading-relaxed max-w-lg mx-auto"
-              style={{ color: "rgba(255,240,210,0.38)" }}>
-              El Encuentro nació de la pasión por el café colombiano de altura. Trabajamos directamente con
-              productores de confianza, seleccionamos cada lote con cuidado y lo tostamos artesanalmente
-              para que llegues a ti con el mejor sabor posible.
+            <p className="text-sm md:text-base leading-relaxed max-w-lg mx-auto"
+              style={{ color: "rgba(255,240,210,0.4)" }}>
+              Nacimos de la pasión por el café colombiano. Trabajamos directamente
+              con productores, seleccionamos cada lote con cuidado y tostamos artesanalmente
+              para que llegue a ti con el mejor perfil posible. Sin intermediarios. Sin compromisos.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ── CTA WhatsApp ── */}
-      <section className="px-6 md:px-14 mb-20 max-w-5xl mx-auto text-center">
+      {/* ── CTA contacto ── */}
+      <section id="contacto" className="px-6 md:px-16 py-20 max-w-5xl mx-auto text-center">
         <motion.div {...fade(0)}>
-          <p className="text-[10px] uppercase tracking-[0.22em] font-semibold mb-3"
-            style={{ color: "rgba(240,180,41,0.5)" }}>
-            ¿Listo para pedir?
+          <p className="text-[10px] uppercase tracking-[0.22em] font-semibold mb-3" style={{ color: "rgba(240,180,41,0.5)" }}>
+            ¿Quieres pedir?
           </p>
-          <h2 className="text-2xl font-black mb-6" style={{ color: "rgba(255,240,210,0.9)" }}>
-            Escríbenos por WhatsApp
+          <h2 className="text-2xl md:text-3xl font-black mb-8" style={{ color: "rgba(255,240,210,0.9)" }}>
+            Escríbenos directamente
           </h2>
-          <a
-            href="https://wa.me/573000000000"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2.5 text-sm font-bold px-8 py-3.5 rounded-xl"
-            style={{
-              background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
-              color: "#fff",
-              boxShadow: "0 4px 24px rgba(37,211,102,0.25)",
-            }}
-          >
-            <MessageCircle className="h-4 w-4" />
-            Hablar con nosotros
-          </a>
-          <p className="mt-4 text-xs" style={{ color: "rgba(255,240,210,0.2)" }}>
-            También en Instagram
-            <a href="https://instagram.com/cafeelencuentro" target="_blank" rel="noopener noreferrer"
-              className="ml-1.5 inline-flex items-center gap-1"
-              style={{ color: "rgba(240,180,41,0.45)" }}>
-              <Instagram className="h-3 w-3" /> @cafeelencuentro
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <a href={WA} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2.5 text-sm font-bold px-8 py-3.5 rounded-xl"
+              style={{
+                background: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
+                color: "#fff",
+                boxShadow: "0 4px 24px rgba(37,211,102,0.25)",
+              }}>
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp
             </a>
-          </p>
+            <a href={IG} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-2.5 text-sm font-semibold px-8 py-3.5 rounded-xl"
+              style={{
+                background: "rgba(255,240,210,0.06)",
+                border: "1px solid rgba(255,240,210,0.12)",
+                color: "rgba(255,240,210,0.7)",
+              }}>
+              <Instagram className="h-4 w-4" />
+              Instagram
+            </a>
+          </div>
         </motion.div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t px-6 py-8 text-center" style={{ borderColor: "rgba(255,240,210,0.06)" }}>
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="h-6 w-6 rounded-lg overflow-hidden">
-            <Image src="/logo-encuentro.png" alt="El Encuentro" width={24} height={24} className="object-contain" />
+      <footer className="border-t px-6 md:px-16 py-8" style={{ borderColor: "rgba(255,240,210,0.06)" }}>
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <div className="h-7 w-7 rounded-lg overflow-hidden">
+              <Image src="/logo-encuentro.png" alt="El Encuentro" width={28} height={28} className="object-contain" />
+            </div>
+            <span className="text-xs font-bold" style={{ color: "rgba(255,240,210,0.4)" }}>El Encuentro · Café de Colombia</span>
           </div>
-          <span className="text-xs font-bold" style={{ color: "rgba(255,240,210,0.5)" }}>El Encuentro</span>
+          <a href="https://contabilidad.cafeelencuentro.com"
+            className="text-[10px] transition-colors"
+            style={{ color: "rgba(255,240,210,0.15)" }}
+            onMouseEnter={e => (e.currentTarget.style.color = "rgba(240,180,41,0.4)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,240,210,0.15)")}>
+            Sistema de gestión interno →
+          </a>
         </div>
-        <p className="text-[10px]" style={{ color: "rgba(255,240,210,0.15)" }}>
-          Café de origen colombiano · Tostado artesanalmente
-        </p>
-        <a href="https://contabilidad.cafeelencuentro.com" className="mt-3 block text-[10px]"
-          style={{ color: "rgba(255,240,210,0.1)" }}>
-          Acceso sistema interno →
-        </a>
       </footer>
-
     </div>
   )
 }

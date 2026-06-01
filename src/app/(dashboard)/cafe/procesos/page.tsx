@@ -198,8 +198,8 @@ function ModalNuevoLote({ calidades, proveedores, cuentas, onClose, onSaved }: M
 
   async function handleSave() {
     setErr(null)
-    if (!fecha || !calidad || !proveedor) {
-      setErr("Fecha, calidad y tostadora son obligatorios.")
+    if (!fecha || !calidad || !proveedor || !cuenta) {
+      setErr("Fecha, calidad, tostadora y cuenta son obligatorios.")
       return
     }
     if (lineas.length === 0) {
@@ -299,10 +299,10 @@ function ModalNuevoLote({ calidades, proveedores, cuentas, onClose, onSaved }: M
               </div>
             </div>
             <div>
-              <label className={labelCls}>Cuenta (opcional)</label>
+              <label className={labelCls}>Cuenta *</label>
               <div className="relative">
-                <select value={cuenta} onChange={e => setCuenta(e.target.value)} className={inputCls + " appearance-none pr-8"}>
-                  <option value="">Sin cuenta</option>
+                <select value={cuenta} onChange={e => setCuenta(e.target.value)} className={inputCls + " appearance-none pr-8"} required>
+                  <option value="">Seleccionar cuenta…</option>
                   {cuentas.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
                 </select>
                 <ChevronDown className="absolute right-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
