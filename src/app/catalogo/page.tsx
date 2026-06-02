@@ -46,9 +46,9 @@ function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-14"
       style={{ height: 68, background: "rgba(8,4,2,0.82)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,240,210,0.04)" }}>
 
-      <a href="#" className="flex items-center gap-2.5 hover:opacity-75 transition-opacity">
-        <div className="h-8 w-8 rounded-lg overflow-hidden" style={{ border: "1px solid rgba(240,180,41,0.2)" }}>
-          <Image src="/logo-encuentro.png" alt="El Encuentro" width={32} height={32} className="object-contain" priority />
+      <a href="#" className="flex items-center gap-3 hover:opacity-75 transition-opacity">
+        <div className="h-11 w-11 rounded-xl overflow-hidden" style={{ border: "1px solid rgba(240,180,41,0.22)", background: "rgba(240,180,41,0.06)" }}>
+          <Image src="/logo-encuentro.png" alt="El Encuentro" width={44} height={44} className="object-contain" priority />
         </div>
         <span className="text-sm font-black tracking-tight" style={{ color: "rgba(255,240,210,0.88)", ...serif }}>
           El Encuentro
@@ -172,14 +172,14 @@ function Productos() {
       <div className="space-y-4">
         {PRODUCTOS.map((p, i) => (
           <motion.div key={p.nombre} {...fadeUp(i * 0.07)}
-            className="group grid grid-cols-1 md:grid-cols-[1fr_auto] gap-0 rounded-2xl overflow-hidden"
+            className="group flex flex-col md:flex-row rounded-2xl overflow-hidden"
             style={{ border: "1px solid rgba(255,240,210,0.06)", background: "rgba(255,240,210,0.02)" }}>
 
-            {/* Imagen */}
-            <div className="relative h-52 md:h-64 overflow-hidden">
+            {/* Imagen — crece igual que el panel de texto */}
+            <div className="relative h-56 md:h-auto md:flex-1 overflow-hidden" style={{ minHeight: 220 }}>
               <Image src={p.img} alt={p.nombre} fill
                 className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                sizes="(max-width:768px) 100vw, 70vw" />
+                sizes="(max-width:768px) 100vw, 65vw" />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to right,rgba(8,4,2,0) 40%,rgba(8,4,2,0.6) 100%)" }} />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(8,4,2,0) 50%,rgba(8,4,2,0.7) 100%)" }} />
 
