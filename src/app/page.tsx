@@ -45,15 +45,14 @@ export default function PortalPage() {
         >
           <h1 style={{
             ...serif,
-            fontSize: "clamp(3.5rem, 9vw, 6rem)",
+            fontSize: "clamp(2.6rem, 6vw, 4.5rem)",
             fontWeight: 300,
-            lineHeight: 1.0,
+            lineHeight: 1.05,
             letterSpacing: "-0.01em",
             color: "rgba(255,240,210,0.97)",
           }}>
-            Gestiona tu<br />
-            café con<br />
-            <em style={{ fontStyle: "italic", color: "#F0B429" }}>precisión.</em>
+            Gestiona tu café<br />
+            con <em style={{ fontStyle: "italic", color: "#F0B429" }}>precisión.</em>
           </h1>
 
           <p style={{ color: "rgba(255,240,210,0.35)", fontWeight: 300, fontSize: "0.9rem", lineHeight: 1.7, maxWidth: "22rem" }}>
