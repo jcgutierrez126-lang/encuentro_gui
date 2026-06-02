@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { ArrowRight, MapPin, MessageCircle, Instagram } from "lucide-react"
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
