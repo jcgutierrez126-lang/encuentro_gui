@@ -362,7 +362,7 @@ function CtaFinal() {
 
         {/* Imagen de fondo tenue */}
         <div className="absolute inset-0">
-          <Image src={IMGS.encuentro} alt="" fill className="object-cover object-center opacity-15" />
+          <Image src="/final.jpeg" alt="" fill className="object-cover object-center opacity-25" />
           <div className="absolute inset-0" style={{ background: "rgba(8,4,2,0.75)" }} />
         </div>
 
