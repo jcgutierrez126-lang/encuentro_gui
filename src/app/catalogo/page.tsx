@@ -56,15 +56,15 @@ function Navbar() {
         <Image
           src="/logo-encuentro.png"
           alt="El Encuentro"
-          width={40}
-          height={40}
+          width={52}
+          height={52}
           className="object-contain"
-          style={{ mixBlendMode: "luminosity", opacity: 0.85 }}
+          style={{ mixBlendMode: "luminosity", opacity: 0.88 }}
           priority
         />
-        <span className="text-sm font-black tracking-tight" style={{ color: "rgba(255,240,210,0.88)", ...serif }}>
+        <em className="not-italic" style={{ ...serif, fontSize: "1.15rem", fontWeight: 400, fontStyle: "italic", color: "rgba(255,240,210,0.9)", letterSpacing: "-0.01em" }}>
           El Encuentro
-        </span>
+        </em>
       </a>
 
       <div className="hidden md:flex items-center gap-10">
