@@ -143,7 +143,7 @@ function Strip() {
   return (
     <div className="border-y" style={{ borderColor: "rgba(255,240,210,0.06)" }}>
       <div className="max-w-5xl mx-auto px-6 md:px-14 grid grid-cols-3 divide-x"
-        style={{ divideColor: "rgba(255,240,210,0.06)" }}>
+        style={{ borderColor: "rgba(255,240,210,0.06)" }}>
         {[["100%","Origen directo"],["SCA +82","Calidad especialidad"],["Lote a lote","Tostado artesanal"]].map(([n,l]) => (
           <div key={l} className="flex flex-col items-center justify-center py-10 gap-1.5 text-center">
             <p className="font-black text-2xl md:text-3xl" style={{ ...serif, color: "#F0B429", fontWeight: 700 }}>{n}</p>
