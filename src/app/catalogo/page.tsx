@@ -52,19 +52,16 @@ function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-14"
       style={{ height: 68, background: "rgba(8,4,2,0.82)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,240,210,0.04)" }}>
 
-      <a href="#" className="flex items-center gap-3 hover:opacity-70 transition-opacity">
+      <a href="#" className="hover:opacity-70 transition-opacity">
         <Image
           src="/logo-encuentro.png"
           alt="El Encuentro"
-          width={52}
-          height={52}
+          width={68}
+          height={68}
           className="object-contain"
-          style={{ mixBlendMode: "luminosity", opacity: 0.88 }}
+          style={{ mixBlendMode: "luminosity", opacity: 0.9 }}
           priority
         />
-        <em className="not-italic" style={{ ...serif, fontSize: "1.15rem", fontWeight: 400, fontStyle: "italic", color: "rgba(255,240,210,0.9)", letterSpacing: "-0.01em" }}>
-          El Encuentro
-        </em>
       </a>
 
       <div className="hidden md:flex items-center gap-10">
