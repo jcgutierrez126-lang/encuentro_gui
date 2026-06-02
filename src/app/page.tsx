@@ -1,143 +1,143 @@
 "use client"
 
-import dynamic from "next/dynamic"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { ArrowRight, ShoppingBag, Package, BarChart2, TrendingDown } from "lucide-react"
-
-const Beams = dynamic(() => import("@/components/beams"), { ssr: false })
+import { ArrowRight, ShoppingBag, Package, FlaskConical, TrendingDown } from "lucide-react"
 
 const serif = { fontFamily: "'Cormorant Garant', Georgia, serif" }
+
+// Misma imagen hero del catálogo — reemplazar por foto propia
+const HERO_IMG = "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1600&q=85&fit=crop"
 
 const MODULOS = [
   { icon: ShoppingBag, label: "Ventas"     },
   { icon: Package,     label: "Inventario" },
-  { icon: BarChart2,   label: "Procesos"   },
+  { icon: FlaskConical,label: "Procesos"   },
   { icon: TrendingDown,label: "Finanzas"   },
 ]
 
 export default function LandingPage() {
   return (
-    <div
-      className="min-h-screen w-full flex flex-col items-center justify-center px-6 relative overflow-hidden"
-      style={{ backgroundColor: "#080402" }}
-    >
-      {/* Beams de fondo — muy sutiles */}
+    <div className="relative min-h-screen w-full overflow-hidden flex flex-col md:flex-row">
+
+      {/* ── Imagen de fondo — ocupa toda la pantalla ── */}
       <div className="absolute inset-0 z-0">
-        <Beams
-          beamWidth={1.5}
-          beamHeight={20}
-          beamNumber={8}
-          lightColor="#C88A1A"
-          speed={1.0}
-          noiseIntensity={1.4}
-          scale={0.14}
-          rotation={0}
+        <Image
+          src={HERO_IMG}
+          alt="El Encuentro"
+          fill
+          className="object-cover object-center"
+          priority
+          quality={90}
         />
-        <div className="absolute inset-0" style={{ background: "rgba(8,4,2,0.62)" }} />
+        {/* Overlay oscuro con degradado direccional */}
+        <div className="absolute inset-0"
+          style={{ background: "linear-gradient(to right, rgba(8,4,2,0.97) 0%, rgba(8,4,2,0.88) 45%, rgba(8,4,2,0.65) 100%)" }} />
+        {/* Viñeta inferior */}
+        <div className="absolute inset-0"
+          style={{ background: "linear-gradient(to top, rgba(8,4,2,0.8) 0%, transparent 40%)" }} />
       </div>
 
-      {/* Contenido */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
-        className="relative z-10 flex flex-col items-center text-center max-w-xs w-full"
-      >
-        {/* Logo */}
-        <div
-          className="h-20 w-20 rounded-2xl overflow-hidden flex items-center justify-center mb-7"
-          style={{
-            background: "rgba(240,180,41,0.07)",
-            border: "1px solid rgba(240,180,41,0.18)",
-            boxShadow: "0 0 60px rgba(240,180,41,0.12)",
-          }}
-        >
-          <Image
-            src="/logo-encuentro.png"
-            alt="El Encuentro"
-            width={64}
-            height={64}
-            className="object-contain"
-            style={{ filter: "drop-shadow(0 4px 16px rgba(240,180,41,0.4))" }}
-            priority
-          />
-        </div>
+      {/* ── Contenido principal ── */}
+      <div className="relative z-10 flex flex-col justify-between w-full min-h-screen px-8 md:px-16 lg:px-24 py-10 md:py-14 max-w-2xl">
 
-        {/* Nombre — serif editorial */}
-        <h1
-          className="leading-none mb-1.5"
-          style={{ ...serif, fontSize: "2rem", fontWeight: 300, color: "rgba(255,240,210,0.93)", letterSpacing: "-0.01em" }}
+        {/* Logo top */}
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-3"
         >
-          El Encuentro
-        </h1>
-        <p
-          className="text-[10px] uppercase tracking-[0.28em] mb-10"
-          style={{ color: "rgba(240,180,41,0.45)", fontWeight: 500 }}
-        >
-          Sistema de gestión
-        </p>
+          <div className="h-11 w-11 rounded-xl overflow-hidden flex-shrink-0"
+            style={{ background: "rgba(240,180,41,0.08)", border: "1px solid rgba(240,180,41,0.2)" }}>
+            <Image src="/logo-encuentro.png" alt="El Encuentro" width={44} height={44} className="object-contain" priority />
+          </div>
+          <div>
+            <p className="text-sm font-black leading-none" style={{ color: "rgba(255,240,210,0.9)", ...serif }}>El Encuentro</p>
+            <p className="text-[9px] uppercase tracking-[0.2em] mt-0.5" style={{ color: "rgba(240,180,41,0.45)", fontWeight: 500 }}>Café tostado · Colombia</p>
+          </div>
+        </motion.div>
 
-        {/* Módulos */}
-        <div className="grid grid-cols-4 gap-2 w-full mb-10">
-          {MODULOS.map(({ icon: Icon, label }) => (
-            <div
-              key={label}
-              className="flex flex-col items-center gap-2 py-3.5 rounded-xl"
-              style={{
-                background: "rgba(255,240,210,0.03)",
-                border: "1px solid rgba(255,240,210,0.06)",
-              }}
-            >
-              <Icon className="h-3.5 w-3.5" style={{ color: "rgba(240,180,41,0.45)" }} />
-              <span
-                className="text-[9px] uppercase tracking-wider"
-                style={{ color: "rgba(255,240,210,0.28)" }}
+        {/* Headline central */}
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+          className="flex flex-col gap-8"
+        >
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.28em] font-semibold mb-5"
+              style={{ color: "rgba(240,180,41,0.5)" }}>
+              Sistema de gestión
+            </p>
+
+            <h1 className="leading-none mb-5"
+              style={{ ...serif, fontSize: "clamp(3rem,7vw,5.5rem)", fontWeight: 300, color: "rgba(255,240,210,0.96)", letterSpacing: "-0.01em" }}>
+              Gestiona tu café<br />
+              con{" "}
+              <em style={{ fontStyle: "italic", color: "#F0B429" }}>precisión.</em>
+            </h1>
+
+            <p className="text-sm leading-loose max-w-sm"
+              style={{ color: "rgba(255,240,210,0.35)", fontWeight: 300 }}>
+              Ventas, inventario, procesos de tostado y finanzas —
+              todo en un solo lugar diseñado para El Encuentro.
+            </p>
+          </div>
+
+          {/* Módulos */}
+          <div className="flex flex-wrap gap-2">
+            {MODULOS.map(({ icon: Icon, label }) => (
+              <div key={label}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl"
+                style={{ background: "rgba(255,240,210,0.04)", border: "1px solid rgba(255,240,210,0.07)" }}>
+                <Icon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: "rgba(240,180,41,0.5)" }} />
+                <span className="text-[11px] uppercase tracking-wider" style={{ color: "rgba(255,240,210,0.35)", fontWeight: 500 }}>
+                  {label}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link href="/login">
+              <button
+                className="flex items-center gap-2.5 text-sm font-bold px-8 py-3.5 rounded-xl transition-all"
+                style={{
+                  background: "linear-gradient(135deg, #F0B429 0%, #C88A1A 100%)",
+                  color: "#2D1600",
+                  boxShadow: "0 8px 32px rgba(240,180,41,0.28)",
+                  fontFamily: "'Inter', sans-serif",
+                }}
               >
-                {label}
-              </span>
-            </div>
-          ))}
-        </div>
+                Acceder al sistema
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </Link>
+          </div>
+        </motion.div>
 
-        {/* Botón acceder */}
-        <Link href="/login" className="w-full">
-          <button
-            className="w-full flex items-center justify-center gap-2.5 rounded-xl py-3.5 text-sm font-bold tracking-wide transition-all"
-            style={{
-              background: "linear-gradient(135deg, #F0B429 0%, #C88A1A 100%)",
-              color: "#2D1600",
-              boxShadow: "0 8px 32px rgba(240,180,41,0.22)",
-              fontFamily: "'Inter', sans-serif",
-            }}
-          >
-            Acceder al sistema
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </Link>
-
-        {/* Link al catálogo */}
-        <a
-          href="https://cafeelencuentro.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-6 text-[11px] transition-colors"
-          style={{ color: "rgba(255,240,210,0.16)", ...serif, fontStyle: "italic" }}
-          onMouseEnter={e => (e.currentTarget.style.color = "rgba(240,180,41,0.45)")}
-          onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,240,210,0.16)")}
+        {/* Footer */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="flex items-center justify-between flex-wrap gap-3"
         >
-          cafeelencuentro.com →
-        </a>
-      </motion.div>
-
-      {/* Footer */}
-      <p
-        className="absolute bottom-6 text-[10px] z-10"
-        style={{ color: "rgba(255,240,210,0.08)", ...serif, fontStyle: "italic" }}
-      >
-        Café de origen colombiano
-      </p>
+          <a href="https://cafeelencuentro.com" target="_blank" rel="noopener noreferrer"
+            className="text-[11px] transition-colors"
+            style={{ color: "rgba(255,240,210,0.2)", ...serif, fontStyle: "italic" }}
+            onMouseEnter={e => (e.currentTarget.style.color = "rgba(240,180,41,0.5)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,240,210,0.2)")}>
+            cafeelencuentro.com →
+          </a>
+          <p className="text-[10px]" style={{ color: "rgba(255,240,210,0.1)", ...serif, fontStyle: "italic" }}>
+            Café de origen colombiano
+          </p>
+        </motion.div>
+      </div>
     </div>
   )
 }
