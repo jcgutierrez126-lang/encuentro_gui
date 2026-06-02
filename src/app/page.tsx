@@ -20,7 +20,7 @@ export default function PortalPage() {
       </div>
 
       {/* ── Contenido ── */}
-      <div className="relative z-10 flex flex-col min-h-screen px-8 md:px-16 py-10 max-w-xl">
+      <div className="relative z-10 flex flex-col min-h-screen px-8 md:px-16 py-10" style={{ maxWidth: "640px" }}>
 
         {/* Logo — solo texto, sin caja */}
         <motion.div
@@ -36,31 +36,37 @@ export default function PortalPage() {
           </p>
         </motion.div>
 
-        {/* Headline central */}
+        {/* Headline + párrafos */}
         <motion.div
           initial={{ opacity: 0, y: 32 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-          className="flex-1 flex flex-col justify-center gap-8 py-16"
+          className="flex-1 flex flex-col justify-center gap-7 py-16"
         >
           <h1 style={{
             ...serif,
-            fontSize: "clamp(2.6rem, 6vw, 4.5rem)",
+            fontSize: "clamp(2.8rem, 5.5vw, 4.8rem)",
             fontWeight: 300,
-            lineHeight: 1.05,
+            lineHeight: 1.03,
             letterSpacing: "-0.01em",
             color: "rgba(255,240,210,0.97)",
+            whiteSpace: "nowrap",
           }}>
-            Gestiona tu café<br />
-            con <em style={{ fontStyle: "italic", color: "#F0B429" }}>precisión.</em>
+            Gestiona tu café con{" "}
+            <em style={{ fontStyle: "italic", color: "#F0B429" }}>precisión.</em>
           </h1>
 
-          <p style={{ color: "rgba(255,240,210,0.35)", fontWeight: 300, fontSize: "0.9rem", lineHeight: 1.7, maxWidth: "22rem" }}>
-            Ventas, inventario, procesos de tostado y finanzas —
-            todo en un solo lugar.
-          </p>
+          {/* 2 párrafos */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.9rem", maxWidth: "26rem" }}>
+            <p style={{ color: "rgba(255,240,210,0.42)", fontWeight: 300, fontSize: "0.9rem", lineHeight: 1.75 }}>
+              Ventas, inventario y procesos de tostado centralizados en un solo lugar, diseñado para El Encuentro.
+            </p>
+            <p style={{ color: "rgba(255,240,210,0.28)", fontWeight: 300, fontSize: "0.85rem", lineHeight: 1.7 }}>
+              Finanzas claras, stock en tiempo real y análisis de rentabilidad con ROI y punto de equilibrio.
+            </p>
+          </div>
 
-          {/* Módulos — solo texto elegante */}
+          {/* Módulos */}
           <div className="flex flex-wrap gap-x-6 gap-y-2">
             {["Ventas", "Inventario", "Procesos", "Finanzas"].map((m, i) => (
               <span key={m} className="text-[11px] uppercase tracking-[0.18em] font-medium"
