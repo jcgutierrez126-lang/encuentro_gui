@@ -8,7 +8,7 @@ import { ArrowRight, MapPin, MessageCircle, Instagram } from "lucide-react"
 /* ── Config ──────────────────────────────────────────────────────────────── */
 
 const WA = "https://wa.me/573000000000"
-const IG = "https://instagram.com/cafeelencuentro"
+const IG = "https://www.instagram.com/cafe.el.encuentro"
 
 // Imágenes Unsplash — reemplazar por las propias
 const IMGS = {
@@ -309,7 +309,7 @@ function CtaFinal() {
             <a href={IG} target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2.5 font-medium text-sm px-8 py-4 rounded-xl"
               style={{ background: "rgba(255,240,210,0.06)", border: "1px solid rgba(255,240,210,0.1)", color: "rgba(255,240,210,0.65)" }}>
-              <Instagram className="h-4 w-4" /> @cafeelencuentro
+              <Instagram className="h-4 w-4" /> @cafe.el.encuentro
             </a>
           </div>
         </div>
