@@ -12,7 +12,7 @@ const IG = "https://www.instagram.com/cafe.el.encuentro"
 
 // Imágenes Unsplash — reemplazar por las propias
 const IMGS = {
-  hero:       "/redes_uno.jpeg",
+  hero:       "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1600&q=90&fit=crop",
   tostado:    "/tueste.jpeg",
   empaque:    "/presentacion_empaque.jpeg",
   tueste2:    "/tueste2.jpeg",
