@@ -12,18 +12,17 @@ const IG = "https://www.instagram.com/cafe.el.encuentro"
 
 // Imágenes Unsplash — reemplazar por las propias
 const IMGS = {
-  hero:    "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1600&q=90&fit=crop",
-  granos:  "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=1200&q=90&fit=crop",
-  tostado: "https://images.unsplash.com/photo-1511537190424-bbbab87ac5eb?w=1200&q=90&fit=crop",
-  molido:  "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1200&q=90&fit=crop",
-  // Imagen Origen — espresso HD
-  origen:  "https://images.unsplash.com/photo-1521302080334-4bebac2763a6?w=1200&q=90&fit=crop",
+  hero:       "/redes_uno.jpeg",
+  tostado:    "/tueste.jpeg",
+  empaque:    "/presentacion_empaque.jpeg",
+  tueste2:    "/tueste2.jpeg",
+  origen:     "/redes_cuatro.jpeg",
 }
 
 const PRODUCTOS = [
-  { nombre: "Tostado Medio",  subtitulo: "Filtro · V60",     proceso: "Washed", tipo: "Grano / Molido", img: IMGS.tostado, desc: "Balance perfecto. Acidez brillante, dulzura de panela y fruta madura." },
-  { nombre: "Especialidad",   subtitulo: "SCA 84 pts",       proceso: "Honey",  tipo: "En grano",       img: IMGS.molido,  desc: "Lotes seleccionados con puntaje SCA 84. Perfil complejo, taza limpia y memorable." },
-  { nombre: "Cold Brew",      subtitulo: "Molienda gruesa",  proceso: "Washed", tipo: "Molido",         img: IMGS.granos,  desc: "Molido especial para cold brew 24 h o cafetera de filtro lento." },
+  { nombre: "Tostado Medio",  subtitulo: "Filtro · V60",     proceso: "Washed",   tipo: "Grano / Molido", img: IMGS.tostado,  desc: "Balance perfecto. Acidez brillante, dulzura de panela y fruta madura." },
+  { nombre: "Especialidad",   subtitulo: "SCA 84 pts",       proceso: "Honey",    tipo: "En grano",       img: IMGS.empaque,  desc: "Lotes seleccionados con puntaje SCA 84. Perfil complejo, taza limpia y memorable." },
+  { nombre: "Cold Brew",      subtitulo: "Molienda gruesa",  proceso: "Washed",   tipo: "Molido",         img: IMGS.tueste2,  desc: "Molido especial para cold brew 24 h o cafetera de filtro lento." },
 ]
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
@@ -99,7 +98,7 @@ function Hero() {
     <section ref={ref} className="relative h-screen flex items-end overflow-hidden">
       {/* Imagen con parallax */}
       <motion.div className="absolute inset-0" style={{ y: imgY }}>
-        <Image src={IMGS.hero} alt="Café El Encuentro" fill className="object-cover object-center" priority quality={90} />
+        <Image src={IMGS.hero} alt="Café El Encuentro" fill className="object-cover object-top" priority quality={90} />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(8,4,2,0.3) 0%,rgba(8,4,2,0.15) 30%,rgba(8,4,2,0.85) 75%,rgba(8,4,2,1) 100%)" }} />
       </motion.div>
 
@@ -235,7 +234,7 @@ function Origen() {
       <div className="max-w-5xl mx-auto px-6 md:px-14 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
         <motion.div {...fadeUp(0)} className="relative h-[500px] rounded-2xl overflow-hidden">
-          <Image src={IMGS.origen} alt="Origen del café" fill className="object-cover object-center" sizes="(max-width:768px) 100vw, 50vw" />
+          <Image src={IMGS.origen} alt="Origen del café — Andes colombianos" fill className="object-cover object-center" sizes="(max-width:768px) 100vw, 50vw" />
           <div className="absolute inset-0 rounded-2xl" style={{ background: "linear-gradient(135deg,rgba(240,180,41,0.08),rgba(8,4,2,0.5))" }} />
           {/* Quote sobre imagen */}
           <div className="absolute bottom-8 left-8 right-8">

@@ -7,8 +7,7 @@ import { ArrowRight, ShoppingBag, Package, FlaskConical, TrendingDown } from "lu
 
 const serif = { fontFamily: "'Cormorant Garant', Georgia, serif" }
 
-// Misma imagen hero del catálogo — reemplazar por foto propia
-const HERO_IMG = "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1600&q=85&fit=crop"
+const HERO_IMG = "/presentacion_empaque_dos.jpeg"
 
 const MODULOS = [
   { icon: ShoppingBag, label: "Ventas"     },
