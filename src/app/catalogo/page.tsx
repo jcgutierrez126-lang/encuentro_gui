@@ -17,6 +17,7 @@ const IMGS = {
   empaque:    "/presentacion_empaque.jpeg",
   tueste2:    "/tueste2.jpeg",
   origen:     "/redes_cuatro.jpeg",
+  granos:     "/redes_dos.jpeg",
 }
 
 const PRODUCTOS = [
