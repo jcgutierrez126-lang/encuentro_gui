@@ -12,12 +12,18 @@ const IG = "https://www.instagram.com/cafe.el.encuentro"
 
 // Imágenes Unsplash — reemplazar por las propias
 const IMGS = {
-  hero:       "/redes_uno.jpeg",
-  tostado:    "/tueste.jpeg",
-  empaque:    "/presentacion_empaque.jpeg",
-  tueste2:    "/tueste2.jpeg",
-  origen:     "/redes_cuatro.jpeg",
-  granos:     "/redes_dos.jpeg",
+  hero:        "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1600&q=90&fit=crop",
+  tostado:     "/tueste.jpeg",
+  empaque:     "/presentacion_empaque.jpeg",
+  tueste2:     "/tueste2.jpeg",
+  origen:      "/redes_cuatro.jpeg",
+  // Imágenes adicionales
+  encuentro:   "/redes_uno.jpeg",
+  campo:       "/redes_dos.jpeg",
+  andes:       "/redes_tres.jpeg",
+  elcielo:     "/redes_cinco.jpeg",
+  empaque2:    "/presentacion_empaque_dos.jpeg",
+  granos:      "/redes_dos.jpeg",
 }
 
 const PRODUCTOS = [
@@ -280,6 +286,71 @@ function Origen() {
   )
 }
 
+/* ── Franja cita ─────────────────────────────────────────────────────────── */
+
+function FranjaCita() {
+  return (
+    <section className="relative h-72 md:h-96 overflow-hidden">
+      <Image src={IMGS.encuentro} alt="Detrás de cada café hay un encuentro" fill
+        className="object-cover object-center" />
+      <div className="absolute inset-0" style={{ background: "rgba(8,4,2,0.58)" }} />
+      <motion.div {...fadeUp(0)}
+        className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+        <p className="text-[10px] uppercase tracking-[0.3em] font-semibold mb-4"
+          style={{ color: "rgba(240,180,41,0.6)" }}>
+          El café siempre permite un
+        </p>
+        <h2 className="leading-none"
+          style={{ ...serif, fontSize: "clamp(3rem,8vw,6.5rem)", fontWeight: 300,
+            color: "rgba(255,240,210,0.97)", letterSpacing: "-0.01em" }}>
+          <em style={{ fontStyle: "italic", color: "#F0B429" }}>encuentro.</em>
+        </h2>
+      </motion.div>
+    </section>
+  )
+}
+
+/* ── Galería ─────────────────────────────────────────────────────────────── */
+
+function Galeria() {
+  const fotos = [
+    { src: IMGS.campo,    alt: "Café y naturaleza — El Encuentro",      posicion: "object-center" },
+    { src: IMGS.andes,    alt: "Cultivo en los Andes colombianos",       posicion: "object-top" },
+    { src: IMGS.elcielo,  alt: "Finca El Cielo — Andes Antioqueño",      posicion: "object-center" },
+    { src: IMGS.empaque2, alt: "Presentación El Encuentro — 500g",       posicion: "object-center" },
+  ]
+
+  return (
+    <section className="py-16 px-6 md:px-14 max-w-5xl mx-auto">
+      <motion.div {...fadeUp(0)} className="mb-10">
+        <p className="text-[10px] uppercase tracking-[0.28em] font-semibold mb-2"
+          style={{ color: "rgba(240,180,41,0.5)" }}>
+          Del campo a tu taza
+        </p>
+        <h2 className="leading-none"
+          style={{ ...serif, fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 300,
+            color: "rgba(255,240,210,0.93)" }}>
+          Nuestra <em style={{ fontStyle: "italic", color: "#F0B429" }}>historia</em> en imágenes
+        </h2>
+      </motion.div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {fotos.map((f, i) => (
+          <motion.div key={f.src} {...fadeUp(i * 0.06)}
+            className="relative overflow-hidden rounded-2xl"
+            style={{ aspectRatio: "3/4" }}>
+            <Image src={f.src} alt={f.alt} fill
+              className={`object-cover ${f.posicion} transition-transform duration-700 hover:scale-105`}
+              sizes="(max-width:768px) 50vw, 25vw" />
+            <div className="absolute inset-0 rounded-2xl"
+              style={{ background: "linear-gradient(to top, rgba(8,4,2,0.5) 0%, transparent 60%)" }} />
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 /* ── CTA final ───────────────────────────────────────────────────────────── */
 
 function CtaFinal() {
@@ -291,7 +362,7 @@ function CtaFinal() {
 
         {/* Imagen de fondo tenue */}
         <div className="absolute inset-0">
-          <Image src={IMGS.granos} alt="" fill className="object-cover object-center opacity-15" />
+          <Image src={IMGS.encuentro} alt="" fill className="object-cover object-center opacity-15" />
           <div className="absolute inset-0" style={{ background: "rgba(8,4,2,0.75)" }} />
         </div>
 
@@ -356,7 +427,9 @@ export default function CatalogoPage() {
       <Hero />
       <Strip />
       <Productos />
+      <FranjaCita />
       <Origen />
+      <Galeria />
       <CtaFinal />
       <Footer />
     </div>
