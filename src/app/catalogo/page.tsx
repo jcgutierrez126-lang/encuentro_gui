@@ -28,8 +28,8 @@ const IMGS = {
 
 const PRODUCTOS = [
   { nombre: "Tostado Medio",  subtitulo: "Filtro · V60",     proceso: "Washed",   tipo: "Grano / Molido", img: IMGS.tostado,  desc: "Balance perfecto. Acidez brillante, dulzura de panela y fruta madura." },
-  { nombre: "Especialidad",   subtitulo: "SCA 84 pts",       proceso: "Honey",    tipo: "En grano",       img: IMGS.empaque,  desc: "Lotes seleccionados con puntaje SCA 84. Perfil complejo, taza limpia y memorable." },
-  { nombre: "Cold Brew",      subtitulo: "Molienda gruesa",  proceso: "Washed",   tipo: "Molido",         img: IMGS.tueste2,  desc: "Molido especial para cold brew 24 h o cafetera de filtro lento." },
+  { nombre: "Especialidad",   subtitulo: "SCA 84 pts",       proceso: "Honey",    tipo: "En grano",       img: "/especialidad.jpeg",         desc: "Lotes seleccionados con puntaje SCA 84. Perfil complejo, taza limpia y memorable." },
+  { nombre: "Cold Brew",      subtitulo: "Molienda gruesa",  proceso: "Washed",   tipo: "Molido",         img: "/presentacion_empaque.jpeg",  desc: "Molido especial para cold brew 24 h o cafetera de filtro lento." },
 ]
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
