@@ -18,7 +18,7 @@ const IMGS = {
   tueste2:     "/tueste2.jpeg",
   origen:      "/redes_cuatro.jpeg",
   // Imágenes adicionales
-  encuentro:   "/redes_uno.jpeg",
+  encuentro:   "/fincaycafe.jpeg",
   campo:       "/redes_dos.jpeg",
   andes:       "/redes_tres.jpeg",
   elcielo:     "/redes_cinco.jpeg",
