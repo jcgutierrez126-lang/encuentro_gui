@@ -46,10 +46,16 @@ function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-14"
       style={{ height: 68, background: "rgba(8,4,2,0.82)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,240,210,0.04)" }}>
 
-      <a href="#" className="flex items-center gap-3 hover:opacity-75 transition-opacity">
-        <div className="h-11 w-11 rounded-xl overflow-hidden" style={{ border: "1px solid rgba(240,180,41,0.22)", background: "rgba(240,180,41,0.06)" }}>
-          <Image src="/logo-encuentro.png" alt="El Encuentro" width={44} height={44} className="object-contain" priority />
-        </div>
+      <a href="#" className="flex items-center gap-3 hover:opacity-70 transition-opacity">
+        <Image
+          src="/logo-encuentro.png"
+          alt="El Encuentro"
+          width={40}
+          height={40}
+          className="object-contain"
+          style={{ mixBlendMode: "luminosity", opacity: 0.85 }}
+          priority
+        />
         <span className="text-sm font-black tracking-tight" style={{ color: "rgba(255,240,210,0.88)", ...serif }}>
           El Encuentro
         </span>
@@ -325,9 +331,8 @@ function Footer() {
     <footer className="border-t px-6 md:px-14 py-8" style={{ borderColor: "rgba(255,240,210,0.05)" }}>
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
-          <div className="h-6 w-6 rounded-lg overflow-hidden">
-            <Image src="/logo-encuentro.png" alt="El Encuentro" width={24} height={24} className="object-contain" />
-          </div>
+          <Image src="/logo-encuentro.png" alt="El Encuentro" width={24} height={24}
+            className="object-contain" style={{ mixBlendMode: "luminosity", opacity: 0.45 }} />
           <span className="text-xs font-semibold" style={{ color: "rgba(255,240,210,0.3)", ...serif }}>
             El Encuentro · Café de Colombia
           </span>
