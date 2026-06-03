@@ -162,14 +162,39 @@ function Hero() {
 /* ── Strip números ───────────────────────────────────────────────────────── */
 
 function Strip() {
+  const items = [
+    { num: "100%",     label: "Origen directo" },
+    { num: "SCA 84",   label: "Calidad especialidad" },
+    { num: "Lote a lote", label: "Tostado artesanal" },
+  ]
   return (
-    <div className="border-y" style={{ borderColor: "rgba(255,240,210,0.06)" }}>
-      <div className="max-w-5xl mx-auto px-6 md:px-14 grid grid-cols-3 divide-x"
-        style={{ borderColor: "rgba(255,240,210,0.06)" }}>
-        {[["100%","Origen directo"],["SCA 84","Calidad especialidad"],["Lote a lote","Tostado artesanal"]].map(([n,l]) => (
-          <div key={l} className="flex flex-col items-center justify-center py-10 gap-1.5 text-center">
-            <p className="font-black text-2xl md:text-3xl" style={{ ...serif, color: "#F0B429", fontWeight: 700 }}>{n}</p>
-            <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: "rgba(255,240,210,0.3)" }}>{l}</p>
+    <div className="py-16 md:py-20 max-w-5xl mx-auto px-6 md:px-14">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-10 md:gap-0">
+        {items.map(({ num, label }, i) => (
+          <div key={label} className="flex flex-col items-center gap-2 flex-1 text-center">
+            {/* Número grande */}
+            <p style={{
+              ...serif,
+              fontSize: "clamp(2rem,4vw,3rem)",
+              fontWeight: 300,
+              fontStyle: "italic",
+              color: "rgba(255,240,210,0.88)",
+              letterSpacing: "-0.01em",
+              lineHeight: 1,
+            }}>
+              {num}
+            </p>
+            {/* Línea decorativa */}
+            <div className="w-6 h-px my-1" style={{ background: "rgba(240,180,41,0.35)" }} />
+            {/* Label */}
+            <p className="text-[9px] uppercase tracking-[0.25em] font-medium"
+              style={{ color: "rgba(255,240,210,0.28)" }}>
+              {label}
+            </p>
+            {/* Separador vertical entre items (solo desktop) */}
+            {i < items.length - 1 && (
+              <div className="hidden md:block absolute" />
+            )}
           </div>
         ))}
       </div>
@@ -191,50 +216,57 @@ function Productos() {
         </h2>
       </motion.div>
 
-      <div className="space-y-4">
+      <div className="divide-y" style={{ borderColor: "rgba(255,240,210,0.06)" }}>
         {PRODUCTOS.map((p, i) => (
           <motion.div key={p.nombre} {...fadeUp(i * 0.07)}
-            className="group flex flex-col md:flex-row rounded-2xl overflow-hidden"
-            style={{ border: "1px solid rgba(255,240,210,0.06)", background: "rgba(255,240,210,0.02)" }}>
+            className="group flex flex-col md:flex-row gap-0 overflow-hidden py-0 md:py-2"
+            style={{ borderColor: "rgba(255,240,210,0.06)" }}>
 
-            {/* Imagen — crece igual que el panel de texto */}
-            <div className="relative h-56 md:h-auto md:flex-1 overflow-hidden" style={{ minHeight: 220 }}>
+            {/* Imagen — sin bordes, solo la foto */}
+            <div className="relative h-60 md:h-72 md:w-[55%] overflow-hidden rounded-xl">
               <Image src={p.img} alt={p.nombre} fill
-                className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                sizes="(max-width:768px) 100vw, 65vw" />
-              <div className="absolute inset-0" style={{ background: "linear-gradient(to right,rgba(8,4,2,0) 40%,rgba(8,4,2,0.6) 100%)" }} />
-              <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(8,4,2,0) 50%,rgba(8,4,2,0.7) 100%)" }} />
-
-              {/* Info sobre imagen */}
-              <div className="absolute bottom-5 left-5 md:hidden">
-                <h3 className="text-xl font-black" style={{ ...serif, color: "rgba(255,240,210,0.95)" }}>{p.nombre}</h3>
-                <p className="text-xs mt-0.5" style={{ color: "rgba(240,180,41,0.7)" }}>{p.subtitulo}</p>
+                className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-103"
+                sizes="(max-width:768px) 100vw, 55vw" />
+              {/* Badge proceso — esquina superior izquierda */}
+              <div className="absolute top-4 left-4">
+                <span className="text-[8px] font-bold uppercase tracking-[0.2em] px-2 py-0.5"
+                  style={{ color: "rgba(240,180,41,0.8)", letterSpacing: "0.22em" }}>
+                  {p.proceso}
+                </span>
               </div>
             </div>
 
-            {/* Texto */}
-            <div className="p-6 md:p-8 flex flex-col justify-between md:min-w-[280px] md:max-w-xs">
-              <div>
-                <div className="hidden md:block mb-4">
-                  <span className="text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full"
-                    style={{ background: "rgba(240,180,41,0.1)", color: "rgba(240,180,41,0.7)", border: "1px solid rgba(240,180,41,0.18)" }}>
-                    {p.proceso}
-                  </span>
-                </div>
-                <h3 className="text-2xl font-black mb-1 hidden md:block" style={{ ...serif, color: "rgba(255,240,210,0.93)", fontWeight: 600 }}>{p.nombre}</h3>
-                <p className="text-xs mb-3 hidden md:block" style={{ color: "rgba(240,180,41,0.6)", fontWeight: 500 }}>{p.subtitulo}</p>
-                <p className="text-sm leading-relaxed" style={{ color: "rgba(255,240,210,0.38)", fontWeight: 300 }}>{p.desc}</p>
-              </div>
-              <div className="mt-6">
-                <span className="text-[10px] uppercase tracking-wider block mb-4" style={{ color: "rgba(255,240,210,0.3)" }}>{p.tipo}</span>
-                <a href={WA} target="_blank" rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider py-3 rounded-xl w-full transition-all duration-300"
-                  style={{ background: "rgba(240,180,41,0.08)", border: "1px solid rgba(240,180,41,0.15)", color: "rgba(240,180,41,0.7)" }}
-                  onMouseEnter={e => { e.currentTarget.style.background = "linear-gradient(135deg,#F0B429,#C88A1A)"; e.currentTarget.style.color = "#2D1600"; e.currentTarget.style.borderColor = "transparent" }}
-                  onMouseLeave={e => { e.currentTarget.style.background = "rgba(240,180,41,0.08)"; e.currentTarget.style.color = "rgba(240,180,41,0.7)"; e.currentTarget.style.borderColor = "rgba(240,180,41,0.15)" }}>
-                  <MessageCircle className="h-3.5 w-3.5" /> Pedir este café
-                </a>
-              </div>
+            {/* Texto — limpio, sin caja */}
+            <div className="md:flex-1 flex flex-col justify-center px-0 md:pl-12 py-6 md:py-8">
+              <p className="text-[9px] uppercase tracking-[0.25em] mb-3 font-medium"
+                style={{ color: "rgba(255,240,210,0.25)" }}>{p.tipo}</p>
+
+              <h3 className="mb-1.5 leading-none" style={{
+                ...serif,
+                fontSize: "clamp(1.8rem,3vw,2.6rem)",
+                fontWeight: 300,
+                color: "rgba(255,240,210,0.93)",
+              }}>{p.nombre}</h3>
+
+              <p className="text-xs mb-4" style={{ color: "rgba(240,180,41,0.55)", fontWeight: 500 }}>
+                {p.subtitulo}
+              </p>
+
+              <p className="text-sm leading-loose max-w-xs mb-8"
+                style={{ color: "rgba(255,240,210,0.35)", fontWeight: 300 }}>
+                {p.desc}
+              </p>
+
+              {/* CTA — solo texto con flecha, sin caja */}
+              <a href={WA} target="_blank" rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.18em] transition-all duration-300 group/btn w-fit"
+                style={{ color: "rgba(240,180,41,0.55)" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#F0B429")}
+                onMouseLeave={e => (e.currentTarget.style.color = "rgba(240,180,41,0.55)")}>
+                <MessageCircle className="h-3.5 w-3.5" />
+                Pedir este café
+                <span className="transition-transform duration-300 group-hover/btn:translate-x-1">→</span>
+              </a>
             </div>
           </motion.div>
         ))}
@@ -370,11 +402,14 @@ function CtaFinal() {
         className="max-w-5xl mx-auto relative rounded-3xl overflow-hidden flex flex-col items-center justify-center py-24 px-6 text-center"
         style={{ border: "1px solid rgba(255,240,210,0.06)" }}>
 
-        {/* Imagen de fondo tenue */}
-        <div className="absolute inset-0">
-          <Image src="/final.jpeg" alt="" fill className="object-cover object-center opacity-25" />
-          <div className="absolute inset-0" style={{ background: "rgba(8,4,2,0.75)" }} />
-        </div>
+        {/* Imagen de fondo — CSS background para garantizar renderizado */}
+        <div className="absolute inset-0" style={{
+          backgroundImage: "url('/final.jpeg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.28,
+        }} />
+        <div className="absolute inset-0" style={{ background: "rgba(8,4,2,0.72)" }} />
 
         <div className="relative z-10">
           <p className="text-[10px] uppercase tracking-[0.28em] font-semibold mb-5" style={{ color: "rgba(240,180,41,0.5)" }}>
