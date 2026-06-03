@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Fondo oscuro cálido -->
+  <rect width="32" height="32" rx="7" fill="#150A04"/>
+
+  <!-- Taza (cuerpo) -->
+  <path d="M7 14 Q7 22 16 22 Q25 22 25 14 Z" fill="#F0B429"/>
+
+  <!-- Taza (base/platillo) -->
+  <ellipse cx="16" cy="22.5" rx="7.5" ry="1.5" fill="#C88A1A"/>
+
+  <!-- Asa de la taza -->
+  <path d="M24 15 Q28 15 28 18 Q28 21 24 21" stroke="#F0B429" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+
+  <!-- Vapor izquierdo -->
+  <path d="M13 11 Q12 9 13 7" stroke="#F0B429" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <!-- Vapor derecho -->
+  <path d="M19 11 Q18 9 19 7" stroke="#F0B429" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- Montaña / colina dentro de la taza (marca del logo) -->
+  <path d="M9 19 Q13 14 16 17 Q19 14 23 19 Z" fill="#C88A1A"/>
+</svg>
