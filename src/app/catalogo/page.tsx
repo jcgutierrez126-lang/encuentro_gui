@@ -447,8 +447,8 @@ function Footer() {
     <footer className="border-t px-6 md:px-14 py-8" style={{ borderColor: "rgba(255,240,210,0.05)" }}>
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2.5">
-          <Image src="/logo-encuentro.png" alt="El Encuentro" width={24} height={24}
-            className="object-contain" style={{ mixBlendMode: "luminosity", opacity: 0.45 }} />
+          <Image src="/logo-encuentro.png" alt="El Encuentro" width={44} height={44}
+            className="object-contain" style={{ mixBlendMode: "luminosity", opacity: 0.55 }} />
           <span className="text-xs font-semibold" style={{ color: "rgba(255,240,210,0.3)", ...serif }}>
             El Encuentro · Café de Colombia
           </span>
