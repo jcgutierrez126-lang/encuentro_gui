@@ -116,7 +116,7 @@ function Hero() {
       {/* Imagen con parallax */}
       <motion.div className="absolute inset-0" style={{ y: imgY }}>
         <Image src={IMGS.hero} alt="Café El Encuentro" fill className="object-cover object-top" priority quality={90} />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom,rgba(8,4,2,0.3) 0%,rgba(8,4,2,0.15) 30%,rgba(8,4,2,0.85) 75%,rgba(8,4,2,1) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(8,4,2,0.88) 0%, rgba(8,4,2,0.55) 38%, transparent 68%), linear-gradient(to top, rgba(8,4,2,0.72) 0%, rgba(8,4,2,0.25) 28%, transparent 55%)" }} />
       </motion.div>
 
       {/* Copy */}
@@ -163,40 +163,52 @@ function Hero() {
 
 function Strip() {
   const items = [
-    { num: "100%",     label: "Origen directo" },
-    { num: "SCA 84",   label: "Calidad especialidad" },
-    { num: "Lote a lote", label: "Tostado artesanal" },
+    {
+      num: "100%",
+      label: "Origen directo",
+      desc: "Sin intermediarios. Precio justo al caficultor colombiano.",
+    },
+    {
+      num: "SCA 84",
+      label: "Calidad especialidad",
+      desc: "Catados por especialistas. Taza limpia, compleja y memorable.",
+    },
+    {
+      num: "Lote a lote",
+      label: "Tostado artesanal",
+      desc: "Cada lote es único. Tostado fresco justo antes de entregar.",
+    },
   ]
   return (
-    <div className="py-16 md:py-20 max-w-5xl mx-auto px-6 md:px-14">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-10 md:gap-0">
-        {items.map(({ num, label }, i) => (
-          <div key={label} className="flex flex-col items-center gap-2 flex-1 text-center">
-            {/* Número grande */}
-            <p style={{
-              ...serif,
-              fontSize: "clamp(2rem,4vw,3rem)",
-              fontWeight: 300,
-              fontStyle: "italic",
-              color: "rgba(255,240,210,0.88)",
-              letterSpacing: "-0.01em",
-              lineHeight: 1,
-            }}>
-              {num}
-            </p>
-            {/* Línea decorativa */}
-            <div className="w-6 h-px my-1" style={{ background: "rgba(240,180,41,0.35)" }} />
-            {/* Label */}
-            <p className="text-[9px] uppercase tracking-[0.25em] font-medium"
-              style={{ color: "rgba(255,240,210,0.28)" }}>
-              {label}
-            </p>
-            {/* Separador vertical entre items (solo desktop) */}
-            {i < items.length - 1 && (
-              <div className="hidden md:block absolute" />
-            )}
-          </div>
-        ))}
+    <div className="py-16 md:py-24" style={{ borderTop: "1px solid rgba(255,240,210,0.05)", borderBottom: "1px solid rgba(255,240,210,0.05)" }}>
+      <div className="max-w-5xl mx-auto px-6 md:px-14">
+        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x" style={{ borderColor: "rgba(255,240,210,0.07)" }}>
+          {items.map(({ num, label, desc }) => (
+            <div key={label} className="flex flex-col gap-3 px-0 md:px-10 py-10 md:py-0 first:pl-0 last:pr-0">
+              <p style={{
+                ...serif,
+                fontSize: "clamp(2.2rem,4vw,3.2rem)",
+                fontWeight: 300,
+                fontStyle: "italic",
+                color: "#F0B429",
+                letterSpacing: "-0.01em",
+                lineHeight: 1,
+              }}>
+                {num}
+              </p>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] mb-2"
+                  style={{ color: "rgba(255,240,210,0.5)" }}>
+                  {label}
+                </p>
+                <p className="text-sm leading-relaxed"
+                  style={{ color: "rgba(255,240,210,0.32)", fontWeight: 300 }}>
+                  {desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -402,14 +414,13 @@ function CtaFinal() {
         className="max-w-5xl mx-auto relative rounded-3xl overflow-hidden flex flex-col items-center justify-center py-24 px-6 text-center"
         style={{ border: "1px solid rgba(255,240,210,0.06)" }}>
 
-        {/* Imagen de fondo — CSS background para garantizar renderizado */}
+        {/* Imagen de fondo */}
         <div className="absolute inset-0" style={{
           backgroundImage: "url('/final.jpeg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          opacity: 0.28,
         }} />
-        <div className="absolute inset-0" style={{ background: "rgba(8,4,2,0.72)" }} />
+        <div className="absolute inset-0" style={{ background: "rgba(8,4,2,0.62)" }} />
 
         <div className="relative z-10">
           <p className="text-[10px] uppercase tracking-[0.28em] font-semibold mb-5" style={{ color: "rgba(240,180,41,0.5)" }}>
