@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
   title: "El Encuentro",
   description: "Plataforma de gestión para El Encuentro. Ventas de café tostado, clientes, finanzas y trazabilidad.",
+  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
